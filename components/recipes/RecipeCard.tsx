@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Pencil, Utensils, Check } from "lucide-react";
 import { logRecipe } from "@/app/(app)/dashboard-recipes/actions";

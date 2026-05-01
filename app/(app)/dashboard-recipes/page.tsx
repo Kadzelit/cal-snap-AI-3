@@ -13,7 +13,7 @@ export default async function DashboardRecipesPage() {
 
   const { data: recipes } = await supabase
     .from("recipes")
-    .select("id, name, description, total_calories, total_protein_g, total_carbs_g, total_fat_g")
+    .select("id, name, description, photo_url, total_calories, total_protein_g, total_carbs_g, total_fat_g")
     .eq("user_id", user?.id ?? "")
     .order("created_at", { ascending: false });
 
