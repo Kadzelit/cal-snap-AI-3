@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profil - CalSnap IA</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#633700",
+                      "on-primary-fixed-variant": "#00531e",
+                      "surface-container-high": "#eae7e7",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#fcf9f8",
+                      "surface-dim": "#dcd9d9",
+                      "secondary-container": "#fe9400",
+                      "inverse-primary": "#3ce36a",
+                      "on-tertiary-container": "#76251f",
+                      "primary-fixed": "#69ff87",
+                      "surface-tint": "#006e2a",
+                      "on-tertiary-fixed": "#410002",
+                      "on-primary": "#ffffff",
+                      "on-surface": "#1c1b1b",
+                      "error-container": "#ffdad6",
+                      "background": "#fcf9f8",
+                      "inverse-surface": "#313030",
+                      "primary": "#006e2a",
+                      "tertiary-fixed": "#ffdad6",
+                      "surface-bright": "#fcf9f8",
+                      "on-tertiary-fixed-variant": "#7e2a24",
+                      "inverse-on-surface": "#f3f0ef",
+                      "on-secondary-fixed": "#2d1600",
+                      "on-secondary": "#ffffff",
+                      "tertiary-container": "#ff8d81",
+                      "secondary-fixed-dim": "#ffb874",
+                      "tertiary-fixed-dim": "#ffb4ab",
+                      "on-error-container": "#93000a",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#f6f3f2",
+                      "on-primary-fixed": "#002108",
+                      "surface-variant": "#e5e2e1",
+                      "primary-container": "#00c853",
+                      "outline-variant": "#bbcbb8",
+                      "on-secondary-fixed-variant": "#6a3b00",
+                      "outline": "#6c7b6a",
+                      "surface-container": "#f0eded",
+                      "surface-container-highest": "#e5e2e1",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#ffdcbf",
+                      "on-surface-variant": "#3c4a3c",
+                      "on-background": "#1c1b1b",
+                      "on-primary-container": "#004c1b",
+                      "primary-fixed-dim": "#3ce36a",
+                      "tertiary": "#9d4139",
+                      "on-error": "#ffffff",
+                      "secondary": "#8c5000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap": "32px",
+                      "unit": "8px",
+                      "container-padding": "24px",
+                      "card-inner-padding": "20px",
+                      "stack-gap": "16px"
+              },
+              "fontFamily": {
+                      "metric-large": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-caps": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Manrope"
+                      ],
+                      "display-xl": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "heading-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "heading-md": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "metric-large": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "heading-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "heading-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-[120px]">
+<!-- TopAppBar -->
+<header class="fixed docked full-width top-0 bg-[#FAFAF7] dark:bg-[#1A1A1A] flex justify-between items-center w-full px-6 py-4 z-50">
+<div class="flex items-center gap-3">
+<img alt="Photo de profil utilisateur" class="w-10 h-10 rounded-full object-cover" data-alt="A high-quality, evenly lit studio portrait of a young man with a slight, friendly smile, facing directly at the camera. He wears a simple, modern dark t-shirt. The background is a clean, minimalist soft gray, creating a highly professional and approachable aesthetic suitable for a premium wellness application profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASitUCLbGNkK5-AQFING-Ts8OgmvctL-26bGCEaNRjot1AYmEGxQzs5ez7gxGCnyUJI_lkwO8US1hcIzAG0C-Kvg5fV3cVgxxCjQT1qJuSph_OJNICakiivIx8OMprb-p3Yfz8zJIqCMiueVlcM57AMhD6ZFQnTYICR0SDTFGGqi6m1hLgysOPpdgMxXenT0hNZiafOXICEy1t2F9EGgeKaK8U57ciaNxbQT2k9I-n2rdu8Ps8OxgD1VF4IX3Danir7DZFUhREWZlS"/>
+<span class="text-xl font-black text-[#1A1A1A] dark:text-[#FAFAF7] font-['Plus_Jakarta_Sans'] tracking-tight">CalSnap IA</span>
+</div>
+<button class="hover:opacity-70 transition-opacity active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-[#00C853] dark:text-[#00C853]">calendar_today</span>
+</button>
+</header>
+<main class="pt-[90px] px-container-padding flex flex-col gap-section-gap">
+<!-- User Profile Header -->
+<section class="flex flex-col items-center text-center mt-4">
+<div class="relative mb-4">
+<img class="w-28 h-28 rounded-full object-cover shadow-[0px_4px_20px_rgba(26,26,26,0.08)] border-4 border-surface-container-lowest" data-alt="A high-quality, evenly lit studio portrait of a young man with a slight, friendly smile, facing directly at the camera. He wears a simple, modern dark t-shirt. The background is a clean, minimalist soft gray, creating a highly professional and approachable aesthetic suitable for a premium wellness application profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUG688uc15mtlSStowGQ9atMlUdzq0gZztZcNcrXsCNQnYp9rCD1gugClVIHzVwh0FnzyOxT8xhwjTYiIZJyKkVv4j3McKcFcH22xTjzxHW4Lb9N7dphtuFDJqOcodRm6JZUhhxy2S9aM5I0o0TFfHV365uvsgxGg4e7JK8VKycFGXL8TIWvddkkyeFWVWYpp-n2kKbyBTDZomdOVLJdnmNhi2J-EAzLnpef_OuNXzTHIzXeHsn6purbwZL3y8iTCWA5xjd5QwKEpU"/>
+<button class="absolute bottom-0 right-0 bg-primary-container text-on-primary rounded-full w-8 h-8 flex items-center justify-center shadow-md active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+</div>
+<h1 class="font-heading-lg text-heading-lg text-on-background mb-2">Kevin</h1>
+<div class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined text-[16px] text-primary">target</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Perdre du poids</span>
+</div>
+</section>
+<!-- Targets Card (Bento Style) -->
+<section class="bg-surface-container-low rounded-[20px] p-card-inner-padding shadow-[0px_4px_20px_rgba(26,26,26,0.04)] relative">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-heading-md text-heading-md text-on-surface">Objectifs Nutritionnels</h2>
+<button class="text-primary hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-stack-gap">
+<div class="col-span-2 bg-surface-container-lowest rounded-xl p-4 flex justify-between items-center">
+<div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">Calories</p>
+<p class="font-metric-large text-metric-large text-on-surface">1,850 <span class="font-body-md text-body-md text-on-surface-variant font-normal">kcal</span></p>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-primary-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined icon-fill">local_fire_department</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">PROTÉINES</span>
+</div>
+<p class="font-heading-md text-heading-md text-on-surface">140g</p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">GLUCIDES</span>
+</div>
+<p class="font-heading-md text-heading-md text-on-surface">180g</p>
+</div>
+</div>
+</section>
+<!-- Menu List -->
+<section class="flex flex-col gap-2">
+<a class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors active:scale-[0.98]" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">flag</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">Objectifs</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors active:scale-[0.98]" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">tune</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">Préférences</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors active:scale-[0.98]" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">Notifications</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors active:scale-[0.98]" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">database</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface font-semibold">Données</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 bg-error-container/20 rounded-xl hover:bg-error-container/40 transition-colors active:scale-[0.98] mt-2 border border-error-container" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-error">
+<span class="material-symbols-outlined">logout</span>
+</div>
+<span class="font-body-lg text-body-lg text-error font-semibold">Déconnexion</span>
+</div>
+<span class="material-symbols-outlined text-error">chevron_right</span>
+</a>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#FAFAF7]/95 backdrop-blur-lg dark:bg-[#1A1A1A]/95 shadow-[0px_-4px_20px_rgba(26,26,26,0.04)]">
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Accueil</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined mb-1">monitoring</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Stats</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 transition-all duration-200 relative -top-3">
+<div class="w-14 h-14 bg-[#00C853] rounded-full flex items-center justify-center text-[#FAFAF7] shadow-lg mb-1">
+<span class="material-symbols-outlined text-[28px]">photo_camera</span>
+</div>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider text-[#1A1A1A] dark:text-[#FAFAF7]">Scanner</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined mb-1">calendar_today</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Journal</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#00C853] dark:text-[#00C853] hover:text-[#00C853] transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined mb-1 icon-fill">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Profil</span>
+</button>
+</nav>
+</body></html>

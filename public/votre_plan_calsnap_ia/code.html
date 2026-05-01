@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Votre plan personnalisé</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#633700",
+                        "on-primary-fixed-variant": "#00531e",
+                        "surface-container-high": "#eae7e7",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fcf9f8",
+                        "surface-dim": "#dcd9d9",
+                        "secondary-container": "#fe9400",
+                        "inverse-primary": "#3ce36a",
+                        "on-tertiary-container": "#76251f",
+                        "primary-fixed": "#69ff87",
+                        "surface-tint": "#006e2a",
+                        "on-tertiary-fixed": "#410002",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "error-container": "#ffdad6",
+                        "background": "#fcf9f8",
+                        "inverse-surface": "#313030",
+                        "primary": "#006e2a",
+                        "tertiary-fixed": "#ffdad6",
+                        "surface-bright": "#fcf9f8",
+                        "on-tertiary-fixed-variant": "#7e2a24",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-secondary-fixed": "#2d1600",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#ff8d81",
+                        "secondary-fixed-dim": "#ffb874",
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f6f3f2",
+                        "on-primary-fixed": "#002108",
+                        "surface-variant": "#e5e2e1",
+                        "primary-container": "#00c853",
+                        "outline-variant": "#bbcbb8",
+                        "on-secondary-fixed-variant": "#6a3b00",
+                        "outline": "#6c7b6a",
+                        "surface-container": "#f0eded",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#ffdcbf",
+                        "on-surface-variant": "#3c4a3c",
+                        "on-background": "#1c1b1b",
+                        "on-primary-container": "#004c1b",
+                        "primary-fixed-dim": "#3ce36a",
+                        "tertiary": "#9d4139",
+                        "on-error": "#ffffff",
+                        "secondary": "#8c5000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "unit": "8px",
+                        "container-padding": "24px",
+                        "card-inner-padding": "20px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "metric-large": ["Plus Jakarta Sans"],
+                        "label-caps": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "heading-lg": ["Plus Jakarta Sans"],
+                        "heading-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "metric-large": ["40px", { "lineHeight": "1.0", "fontWeight": "800" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "heading-lg": ["28px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "heading-md": ["20px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen text-on-background flex flex-col font-body-md selection:bg-primary-container selection:text-on-primary">
+<!-- Main Content Canvas (Navigation suppressed for Onboarding Intent) -->
+<main class="flex-1 w-full max-w-md mx-auto px-container-padding py-section-gap flex flex-col justify-between relative">
+<!-- Header -->
+<div class="mt-8 mb-section-gap">
+<h1 class="font-display-xl text-display-xl text-on-background text-center">Votre plan personnalisé</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant text-center mt-4">Conçu spécifiquement pour atteindre vos objectifs.</p>
+</div>
+<!-- Bento Grid Data Display -->
+<div class="flex-1 flex flex-col gap-stack-gap">
+<!-- Hero Card: Calorie Target -->
+<div class="bg-surface-container rounded-[20px] p-card-inner-padding flex flex-col items-center justify-center shadow-[0px_4px_20px_rgba(26,26,26,0.04)] relative overflow-hidden">
+<!-- Decorative Glow -->
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-3">Objectif Quotidien</span>
+<div class="flex items-baseline gap-2">
+<span class="font-metric-large text-metric-large text-primary-container">2 150</span>
+<span class="font-body-md text-body-md text-on-surface-variant">kcal / jour</span>
+</div>
+</div>
+<!-- Macros Grid -->
+<div class="grid grid-cols-2 gap-stack-gap">
+<!-- Protéines (Full Width) -->
+<div class="col-span-2 bg-surface-container rounded-[20px] p-card-inner-padding shadow-[0px_4px_20px_rgba(26,26,26,0.04)]">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+<span class="font-heading-md text-heading-md text-on-background">Protéines</span>
+</div>
+<span class="font-heading-lg text-heading-lg text-on-background">160g</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="w-[35%] h-full bg-primary-container rounded-full"></div>
+</div>
+</div>
+<!-- Glucides (Half Width) -->
+<div class="col-span-1 bg-surface-container rounded-[20px] p-card-inner-padding shadow-[0px_4px_20px_rgba(26,26,26,0.04)] flex flex-col justify-between aspect-square">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">grain</span>
+<span class="font-body-lg text-body-lg text-on-background font-semibold">Glucides</span>
+</div>
+<div class="mt-auto">
+<span class="font-heading-lg text-heading-lg text-on-background block mb-3">215g</span>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="w-[45%] h-full bg-secondary-container rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Lipides (Half Width) -->
+<div class="col-span-1 bg-surface-container rounded-[20px] p-card-inner-padding shadow-[0px_4px_20px_rgba(26,26,26,0.04)] flex flex-col justify-between aspect-square">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="font-body-lg text-body-lg text-on-background font-semibold">Lipides</span>
+</div>
+<div class="mt-auto">
+<span class="font-heading-lg text-heading-lg text-on-background block mb-3">70g</span>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="w-[20%] h-full bg-secondary-container rounded-full opacity-80"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Area -->
+<div class="mt-12 mb-4 w-full">
+<button class="w-full bg-primary-container text-on-primary rounded-[28px] py-4 font-heading-md text-heading-md text-center hover:opacity-90 active:scale-95 transition-all shadow-[0px_4px_20px_rgba(0,200,83,0.2)] flex items-center justify-center gap-2">
+                C'est parti !
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</main>
+</body></html>

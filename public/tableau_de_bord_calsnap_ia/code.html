@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CalSnap IA - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#633700",
+                        "on-primary-fixed-variant": "#00531e",
+                        "surface-container-high": "#eae7e7",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fcf9f8",
+                        "surface-dim": "#dcd9d9",
+                        "secondary-container": "#fe9400",
+                        "inverse-primary": "#3ce36a",
+                        "on-tertiary-container": "#76251f",
+                        "primary-fixed": "#69ff87",
+                        "surface-tint": "#006e2a",
+                        "on-tertiary-fixed": "#410002",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "error-container": "#ffdad6",
+                        "background": "#fcf9f8",
+                        "inverse-surface": "#313030",
+                        "primary": "#006e2a",
+                        "tertiary-fixed": "#ffdad6",
+                        "surface-bright": "#fcf9f8",
+                        "on-tertiary-fixed-variant": "#7e2a24",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-secondary-fixed": "#2d1600",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#ff8d81",
+                        "secondary-fixed-dim": "#ffb874",
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f6f3f2",
+                        "on-primary-fixed": "#002108",
+                        "surface-variant": "#e5e2e1",
+                        "primary-container": "#00c853",
+                        "outline-variant": "#bbcbb8",
+                        "on-secondary-fixed-variant": "#6a3b00",
+                        "outline": "#6c7b6a",
+                        "surface-container": "#f0eded",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#ffdcbf",
+                        "on-surface-variant": "#3c4a3c",
+                        "on-background": "#1c1b1b",
+                        "on-primary-container": "#004c1b",
+                        "primary-fixed-dim": "#3ce36a",
+                        "tertiary": "#9d4139",
+                        "on-error": "#ffffff",
+                        "secondary": "#8c5000"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "unit": "8px",
+                        "container-padding": "24px",
+                        "card-inner-padding": "20px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "metric-large": ["Plus Jakarta Sans"],
+                        "label-caps": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "heading-lg": ["Plus Jakarta Sans"],
+                        "heading-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "metric-large": ["40px", { "lineHeight": "1.0", "fontWeight": "800" }],
+                        "label-caps": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "heading-lg": ["28px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "heading-md": ["20px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased pb-24 min-h-screen flex flex-col">
+<!-- TopAppBar (Web & Mobile) -->
+<header class="flex justify-between items-center w-full px-6 py-4 bg-[#FAFAF7] dark:bg-[#1A1A1A] border-b border-[#F2F2EF] dark:border-neutral-800 docked full-width top-0 z-40 sticky">
+<div class="flex items-center gap-3">
+<img alt="Photo de profil utilisateur" class="w-10 h-10 rounded-full object-cover border border-surface-container-highest" data-alt="A close up portrait photo of a young professional male in a well-lit studio environment, serving as an avatar. The overall visual style is modern, clean, and bright, integrating seamlessly into a minimalist user interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcc9dzWNXcCmiDoubGa_MnrGcH3vF9QvEqZOqqBw_r3GzyeJFVsXYuWIZdAJfAK6OLZsCffj6EtNgkj3C1UUnmaxkcSmkLn9yodVMwhpziaVJH_I_VBcNziZlTWmiXu3ihY6P7c4GU8cnkDtqOV_0J5DVV0o-hTEWqv1553b2AMGAtSwAW8XWtWEc2mdPU3qcHtP89-HJy3URgIm_bHcagsuHBYviYMK6MVAbP4RkSX6h-qcHCNojiva_zJ8vBo347SlN7tUqBihhJ"/>
+<div class="font-['Plus_Jakarta_Sans'] text-lg font-bold tracking-tight text-[#1A1A1A] dark:text-[#FAFAF7]">CalSnap IA</div>
+</div>
+<button class="text-[#00C853] dark:text-[#00C853] hover:opacity-70 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+</header>
+<main class="flex-1 flex flex-col px-container-padding pt-6 gap-section-gap max-w-2xl mx-auto w-full">
+<!-- Welcome & Date Nav -->
+<section class="flex flex-col gap-2">
+<h1 class="font-heading-lg text-heading-lg">Bonjour Kevin</h1>
+<div class="flex items-center justify-between bg-surface-container-low rounded-lg p-2">
+<button class="p-2 rounded-full hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">chevron_left</span>
+</button>
+<span class="font-body-md text-body-md font-semibold">Aujourd'hui, 24 Oct</span>
+<button class="p-2 rounded-full hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Hero: Calorie Ring -->
+<section class="flex flex-col items-center justify-center py-4">
+<div class="relative w-64 h-64 flex items-center justify-center">
+<!-- Outer Ring Background -->
+<svg class="absolute inset-0 w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-highest" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-width="6"></circle>
+<!-- Progress Ring -->
+<circle class="text-primary-container" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="283" stroke-dashoffset="65" stroke-linecap="round" stroke-width="6"></circle>
+</svg>
+<div class="flex flex-col items-center text-center z-10 bg-surface/50 backdrop-blur-sm p-4 rounded-full">
+<span class="font-metric-large text-metric-large text-on-background">1 847</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ 2 400 kcal</span>
+<span class="font-label-caps text-label-caps text-primary mt-1">RESTANTS</span>
+</div>
+</div>
+</section>
+<!-- Macros -->
+<section class="bg-[#F2F2EF] rounded-[20px] p-[20px] shadow-[0px_4px_20px_rgba(26,26,26,0.04)] flex flex-col gap-4">
+<h2 class="font-heading-md text-heading-md">Macros</h2>
+<div class="flex flex-col gap-stack-gap">
+<!-- Protéines -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-caps text-label-caps text-on-surface">
+<span>Protéines</span>
+<span>85g / 150g</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 55%"></div>
+</div>
+</div>
+<!-- Glucides -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-caps text-label-caps text-on-surface">
+<span>Glucides</span>
+<span>120g / 250g</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2">
+<div class="bg-[#FF9500] h-2 rounded-full" style="width: 48%"></div>
+</div>
+</div>
+<!-- Lipides -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-caps text-label-caps text-on-surface">
+<span>Lipides</span>
+<span>40g / 70g</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2">
+<div class="bg-[#FF9500] h-2 rounded-full" style="width: 57%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Repas du jour -->
+<section class="flex flex-col gap-stack-gap mb-8">
+<div class="flex justify-between items-end">
+<h2 class="font-heading-md text-heading-md">Repas du jour</h2>
+<button class="font-label-caps text-label-caps text-primary hover:underline">Voir tout</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Meal Card 1 -->
+<div class="bg-[#F2F2EF] rounded-[20px] p-[20px] shadow-[0px_4px_20px_rgba(26,26,26,0.04)] flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer active:scale-[0.98] duration-200">
+<div class="w-16 h-16 rounded-lg bg-surface-container-highest overflow-hidden flex-shrink-0">
+<img alt="Petit-déjeuner" class="w-full h-full object-cover" data-alt="A beautifully plated bowl of oatmeal topped with fresh berries, sliced almonds, and a drizzle of honey, sitting on a light wooden table. The scene is brightly lit with natural morning light, conveying a healthy, fresh, and modern minimalist wellness aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD39JKXcLUV_sVnV2C_nFz95BGWlyMI474KmsUaRXQ5ZzYjmiX_HGE3E3vdBIyCHt2bshDEzsvEaCSBuBmoGtOUs-KOMZ1UukbzSA3dNc1bPgoz991p-xp7Uh9ln-T2rbtaN0YmTKJNm-4vLO-kM_lU7t4l-9BO89VJutXJWrBjIjUqKbJ05nDkkJLzTSJyq3tJikPJbmgmdbCpSJNauhvuLsSFhk1HvMldwywMfpO0CPf75p21K4yXjiVSEGhpcMjTqaSq3GltOh-n"/>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">08:00</span>
+<h3 class="font-body-lg text-body-lg font-semibold leading-tight">Petit-déjeuner</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Flocons d'avoine &amp; Fruits</p>
+</div>
+<div class="font-heading-md text-heading-md text-primary-container">
+                        320 <span class="font-body-md text-body-md text-on-surface-variant">kcal</span>
+</div>
+</div>
+<!-- Meal Card 2 -->
+<div class="bg-[#F2F2EF] rounded-[20px] p-[20px] shadow-[0px_4px_20px_rgba(26,26,26,0.04)] flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer active:scale-[0.98] duration-200">
+<div class="w-16 h-16 rounded-lg bg-surface-container-highest overflow-hidden flex-shrink-0">
+<img alt="Déjeuner" class="w-full h-full object-cover" data-alt="A vibrant salad bowl filled with mixed greens, avocado, cherry tomatoes, and grilled chicken breast, served on a clean white ceramic plate. The lighting is crisp and even, highlighting the fresh ingredients in a modern, healthy lifestyle context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxZg7omaDZ36CajogAyFtTMx07bLy46vywp5ZEiJzA6_uyxBjCy1RL4leAX4XFwWA4hIq3yom2LOH0WtITvILCefA8Q3ZA4Dx6rYeES4HMDmeQ3FQQ8GC6OezelNmfZZoDRhgoVc78H1iLBq4p0EoWkmgBN6eMP_fdKE3T-WTknploimfJyDfmrC4Q2-vWQitPBxlDrHstIrKxZO1BdgCgcB83JAsYaUsyEEzeeDc94z4e6fxx5AUxDm9-yBovZnvVi0PCS3nd2qvA"/>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">13:15</span>
+<h3 class="font-body-lg text-body-lg font-semibold leading-tight">Déjeuner</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Salade Poulet Avocat</p>
+</div>
+<div class="font-heading-md text-heading-md text-primary-container">
+                        540 <span class="font-body-md text-body-md text-on-surface-variant">kcal</span>
+</div>
+</div>
+<!-- Add Meal Button -->
+<button class="bg-[#00C853] text-[#FAFAF7] rounded-[28px] py-3 px-6 font-body-lg text-body-lg font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm w-full mt-2">
+<span class="material-symbols-outlined">add</span>
+                    Ajouter un repas
+                </button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#FAFAF7]/95 backdrop-blur-lg dark:bg-[#1A1A1A]/95 border-t border-[#F2F2EF] dark:border-neutral-800 shadow-[0px_-4px_20px_rgba(26,26,26,0.04)]">
+<button class="flex flex-col items-center justify-center text-[#00C853] dark:text-[#00C853] hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined fill-icon mb-1">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Accueil</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">monitoring</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Stats</span>
+</button>
+<!-- Elevated FAB inside Bottom Nav -->
+<div class="relative -top-5">
+<button class="bg-[#00C853] text-[#FAFAF7] p-4 rounded-full shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 flex items-center justify-center border-4 border-background">
+<span class="material-symbols-outlined text-3xl">photo_camera</span>
+</button>
+<span class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 whitespace-nowrap">Scanner</span>
+</div>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">calendar_today</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Journal</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 dark:text-[#FAFAF7]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Profil</span>
+</button>
+</nav>
+<!-- SideNav (Web Only Placeholder for Desktop Layout) -->
+<nav class="hidden md:flex fixed left-0 top-16 h-full w-24 flex-col items-center py-8 gap-8 bg-[#FAFAF7]/95 border-r border-[#F2F2EF]">
+<button class="flex flex-col items-center justify-center text-[#00C853] hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined fill-icon mb-1">home</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Accueil</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">monitoring</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Stats</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">photo_camera</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Scanner</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">calendar_today</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Journal</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#1A1A1A]/40 hover:text-[#00C853] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-wider">Profil</span>
+</button>
+</nav>
+</body></html>

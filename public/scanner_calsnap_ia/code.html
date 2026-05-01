@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CalSnap IA - Scanner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#633700",
+                      "on-primary-fixed-variant": "#00531e",
+                      "surface-container-high": "#eae7e7",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#fcf9f8",
+                      "surface-dim": "#dcd9d9",
+                      "secondary-container": "#fe9400",
+                      "inverse-primary": "#3ce36a",
+                      "on-tertiary-container": "#76251f",
+                      "primary-fixed": "#69ff87",
+                      "surface-tint": "#006e2a",
+                      "on-tertiary-fixed": "#410002",
+                      "on-primary": "#ffffff",
+                      "on-surface": "#1c1b1b",
+                      "error-container": "#ffdad6",
+                      "background": "#fcf9f8",
+                      "inverse-surface": "#313030",
+                      "primary": "#006e2a",
+                      "tertiary-fixed": "#ffdad6",
+                      "surface-bright": "#fcf9f8",
+                      "on-tertiary-fixed-variant": "#7e2a24",
+                      "inverse-on-surface": "#f3f0ef",
+                      "on-secondary-fixed": "#2d1600",
+                      "on-secondary": "#ffffff",
+                      "tertiary-container": "#ff8d81",
+                      "secondary-fixed-dim": "#ffb874",
+                      "tertiary-fixed-dim": "#ffb4ab",
+                      "on-error-container": "#93000a",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#f6f3f2",
+                      "on-primary-fixed": "#002108",
+                      "surface-variant": "#e5e2e1",
+                      "primary-container": "#00c853",
+                      "outline-variant": "#bbcbb8",
+                      "on-secondary-fixed-variant": "#6a3b00",
+                      "outline": "#6c7b6a",
+                      "surface-container": "#f0eded",
+                      "surface-container-highest": "#e5e2e1",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#ffdcbf",
+                      "on-surface-variant": "#3c4a3c",
+                      "on-background": "#1c1b1b",
+                      "on-primary-container": "#004c1b",
+                      "primary-fixed-dim": "#3ce36a",
+                      "tertiary": "#9d4139",
+                      "on-error": "#ffffff",
+                      "secondary": "#8c5000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap": "32px",
+                      "unit": "8px",
+                      "container-padding": "24px",
+                      "card-inner-padding": "20px",
+                      "stack-gap": "16px"
+              },
+              "fontFamily": {
+                      "metric-large": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-caps": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Manrope"
+                      ],
+                      "display-xl": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "heading-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "heading-md": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "metric-large": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "heading-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "heading-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      }
+              }
+          },
+        }
+      </script>
+<style>
+        .camera-overlay {
+            background: linear-gradient(180deg, rgba(28,27,27,0.4) 0%, rgba(28,27,27,0) 20%, rgba(28,27,27,0) 80%, rgba(28,27,27,0.6) 100%);
+        }
+        
+        .corner-guide {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border: 3px solid #ffffff;
+            opacity: 0.8;
+            border-radius: 12px;
+        }
+        
+        .corner-tl { top: 20%; left: 10%; border-bottom: none; border-right: none; border-bottom-right-radius: 0; }
+        .corner-tr { top: 20%; right: 10%; border-bottom: none; border-left: none; border-bottom-left-radius: 0; }
+        .corner-bl { bottom: 30%; left: 10%; border-top: none; border-right: none; border-top-right-radius: 0; }
+        .corner-br { bottom: 30%; right: 10%; border-top: none; border-left: none; border-top-left-radius: 0; }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background h-screen w-screen overflow-hidden flex flex-col font-body-md relative">
+<!-- Camera Viewport (Simulated with an image) -->
+<div class="absolute inset-0 z-0 bg-inverse-surface">
+<img alt="Camera view of a fresh salad bowl" class="w-full h-full object-cover opacity-80" data-alt="A top-down smartphone camera view of a vibrant, healthy meal bowl containing fresh greens, avocado, quinoa, and soft boiled eggs on a modern rustic wooden table. The lighting is bright, natural daylight casting soft shadows, evoking a fresh, healthy, and appetizing mood suitable for a premium nutrition tracking app interface. The visual style is crisp photography with a slight vignette effect to focus attention on the center of the frame." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcwRNks_yawfnyQ4DbYRJ4tIJ1HAvWwutG_pVwapfvZ5Yj6eb5-AwbgpNgjjNr2h6iFzAHJtWIokCChHU94CRDIyGbzon_kzAzUaSFZuqpELupv-cunK0k_1YGBZ7ZG8pnCZ4ZoYjFJ6K1I_s1LasBZSuIHOGBuGmJeRBp6bqocIIefQOMyVUs3U5dTLySrbJkxrKIv4NAHh9m_8EGp0b_xQ4ZrCyoVTN8yQdeDmyuEakAjDYFoYfnfg8KfH7Lrp1iFg8wJgR-HzhP"/>
+<!-- Gradient Overlay for readability of top/bottom controls -->
+<div class="absolute inset-0 camera-overlay z-10"></div>
+</div>
+<!-- Framing Guides -->
+<div class="absolute inset-0 z-20 pointer-events-none">
+<div class="corner-guide corner-tl"></div>
+<div class="corner-guide corner-tr"></div>
+<div class="corner-guide corner-bl"></div>
+<div class="corner-guide corner-br"></div>
+<!-- Center Reticle -->
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center opacity-30">
+<span class="material-symbols-outlined text-on-primary text-display-xl font-display-xl" style="font-variation-settings: 'FILL' 0;">center_focus_weak</span>
+</div>
+</div>
+<!-- Top Controls -->
+<div class="relative z-30 flex justify-between items-start w-full p-container-padding pt-12">
+<!-- Close Button -->
+<button class="w-12 h-12 rounded-full bg-surface/20 backdrop-blur-md flex items-center justify-center text-on-primary hover:bg-surface/30 transition-colors">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<!-- Flash Toggle -->
+<button class="w-12 h-12 rounded-full bg-surface/20 backdrop-blur-md flex items-center justify-center text-on-primary hover:bg-surface/30 transition-colors">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">flash_off</span>
+</button>
+</div>
+<!-- Bottom Controls -->
+<div class="relative z-30 mt-auto w-full pb-section-gap flex flex-col items-center">
+<!-- Instruction Label -->
+<div class="mb-section-gap bg-surface/20 backdrop-blur-md px-6 py-3 rounded-full">
+<p class="font-heading-md text-heading-md text-on-primary text-center">Pointez votre repas</p>
+</div>
+<!-- Shutter Button Container -->
+<div class="flex items-center justify-center mb-stack-gap">
+<!-- Shutter Ring -->
+<div class="w-24 h-24 rounded-full border-4 border-on-primary flex items-center justify-center p-1">
+<!-- Shutter Core -->
+<button class="w-full h-full rounded-full bg-on-primary flex items-center justify-center active:scale-90 transition-transform duration-200 group relative">
+<!-- Subtle inner shadow/gradient for depth -->
+<div class="absolute inset-0 rounded-full bg-gradient-to-b from-white to-gray-200"></div>
+<span class="material-symbols-outlined text-primary text-[32px] relative z-10 opacity-0 group-hover:opacity-100 transition-opacity">photo_camera</span>
+</button>
+</div>
+</div>
+<!-- Secondary CTA -->
+<button class="mt-4 flex items-center space-x-2 text-on-primary bg-transparent hover:bg-surface/10 px-6 py-3 rounded-full transition-colors backdrop-blur-sm">
+<span class="material-symbols-outlined text-[20px]">photo_library</span>
+<span class="font-body-md text-body-md font-semibold">Choisir depuis la galerie</span>
+</button>
+</div>
+</body></html>

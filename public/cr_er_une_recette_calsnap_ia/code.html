@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ffdad6",
+                    "primary-fixed-dim": "#3ce36a",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f3f0ef",
+                    "surface-dim": "#dcd9d9",
+                    "surface-container": "#f0eded",
+                    "error": "#ba1a1a",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#6c7b6a",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1c1b1b",
+                    "on-secondary-fixed-variant": "#6a3b00",
+                    "on-tertiary-container": "#76251f",
+                    "on-primary-container": "#004c1b",
+                    "secondary-fixed": "#ffdcbf",
+                    "background": "#fcf9f8",
+                    "secondary-fixed-dim": "#ffb874",
+                    "primary-container": "#00c853",
+                    "on-background": "#1c1b1b",
+                    "secondary-container": "#fe9400",
+                    "primary": "#006e2a",
+                    "tertiary-fixed-dim": "#ffb4ab",
+                    "tertiary": "#9d4139",
+                    "surface-variant": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#7e2a24",
+                    "on-primary-fixed": "#002108",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-secondary-fixed": "#2d1600",
+                    "inverse-primary": "#3ce36a",
+                    "surface-bright": "#fcf9f8",
+                    "secondary": "#8c5000",
+                    "on-secondary-container": "#633700",
+                    "inverse-surface": "#313030",
+                    "surface": "#fcf9f8",
+                    "on-primary-fixed-variant": "#00531e",
+                    "outline-variant": "#bbcbb8",
+                    "surface-container-low": "#f6f3f2",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#eae7e7",
+                    "primary-fixed": "#69ff87",
+                    "on-surface-variant": "#3c4a3c",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#006e2a",
+                    "on-tertiary-fixed": "#410002",
+                    "tertiary-container": "#ff8d81"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "24px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-gap": "16px",
+                    "unit": "8px",
+                    "section-gap": "32px",
+                    "container-padding": "24px",
+                    "card-inner-padding": "20px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Manrope"],
+                    "heading-md": ["Plus Jakarta Sans"],
+                    "metric-large": ["Plus Jakarta Sans"],
+                    "display-xl": ["Plus Jakarta Sans"],
+                    "label-caps": ["Manrope"],
+                    "heading-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Manrope"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "heading-md": ["20px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "metric-large": ["40px", {"lineHeight": "1.0", "fontWeight": "800"}],
+                    "display-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "heading-lg": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #FAFAF7;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-[#FAFAF7] dark:bg-[#1A1A1A] border-b border-[#F2F2EF] dark:border-neutral-800 docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<button class="active:scale-95 transition-transform duration-200 hover:opacity-70 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#1A1A1A] dark:text-[#FAFAF7]">arrow_back</span>
+</button>
+<h1 class="font-['Plus_Jakarta_Sans'] text-lg font-bold tracking-tight text-[#1A1A1A] dark:text-[#FAFAF7]">Nouvelle Recette</h1>
+<div class="w-6"></div> <!-- Spacer for symmetry -->
+</div>
+</header>
+<main class="max-w-md mx-auto px-6 pt-6 pb-32 space-y-8">
+<!-- Recipe Photo Section -->
+<section class="space-y-4">
+<div class="relative w-full aspect-video bg-[#F2F2EF] rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant hover:border-primary-container transition-colors group cursor-pointer overflow-hidden">
+<img class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity" data-alt="A professional culinary photograph of a vibrant, healthy salad bowl with fresh greens and protein, captured in soft, high-key natural lighting. The composition is minimalist and clean, set against a pristine white marble background that echoes the app's modern health-conscious aesthetic. Subtle green accents from the vegetables complement the primary brand color palette. The overall mood is fresh, appetizing, and technologically polished." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9KTesK2i5iR7yiq2kyiB0c9Dr5PvcWcDQFw2MEnNsGcz86JcA0DLUSvbzWOvdV4gmF6VtQwaBJ7LRV89lQw3v5_keJ4PiWtKKdkcXpcg-6z6ewBQhTyzhjis1jMWtsodzjKmBxiWXQEvcgfQHyy4xkFQNM6C7mZyLV5WQEMVyIgCVVqfO9rY7ePC9tAqJ_kDvnTYIj-Z8GEV1F3adu6CvJZ8Mocrjit2-RWE0NETOKOeQbV9wObvpHSh4M9ZJsSTcMArEs4P6E7Zk"/>
+<div class="z-10 flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-4xl text-primary-container">photo_camera</span>
+<span class="font-heading-md text-on-surface-variant">Ajouter une photo</span>
+</div>
+</div>
+</section>
+<!-- General Information -->
+<section class="space-y-4">
+<div class="space-y-2">
+<label class="font-label-caps text-on-surface-variant ml-2">Nom de la recette</label>
+<input class="w-full bg-[#F2F2EF] border-none rounded-2xl px-6 py-4 text-body-lg focus:ring-2 focus:ring-primary-container placeholder:opacity-40 outline-none transition-all" placeholder="Ex: Bowl de Quinoa au Poulet" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-on-surface-variant ml-2">Temps (min)</label>
+<div class="relative">
+<input class="w-full bg-[#F2F2EF] border-none rounded-2xl px-6 py-4 text-body-lg focus:ring-2 focus:ring-primary-container placeholder:opacity-40 outline-none transition-all" placeholder="20" type="number"/>
+<span class="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-on-surface-variant">schedule</span>
+</div>
+</div>
+</section>
+<!-- Ingredients Section -->
+<section class="space-y-4">
+<div class="flex justify-between items-center px-2">
+<h2 class="font-heading-md text-on-surface">Ingrédients</h2>
+<button class="text-primary font-bold font-body-md flex items-center gap-1 hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Ajouter un ingrédient
+                </button>
+</div>
+<div class="space-y-3">
+<!-- Example Ingredient Item -->
+<div class="bg-[#F2F2EF] p-4 rounded-2xl flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-heading-md text-sm">Poulet Grillé</span>
+<span class="font-body-md text-xs text-on-surface-variant">150g</span>
+</div>
+<button class="text-error opacity-40 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Macros Section -->
+<section class="space-y-6">
+<h2 class="font-heading-md text-on-surface px-2">Détails des Macros</h2>
+<div class="grid grid-cols-2 gap-4">
+<!-- Calories -->
+<div class="bg-[#F2F2EF] p-5 rounded-2xl shadow-[0px_4px_20px_rgba(26,26,26,0.04)] space-y-2">
+<label class="font-label-caps text-on-surface-variant block">Calories</label>
+<input class="w-full bg-transparent border-none text-heading-lg font-metric-large p-0 focus:ring-0 placeholder:opacity-20" placeholder="0" type="number"/>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-1/2"></div>
+</div>
+</div>
+<!-- Proteins -->
+<div class="bg-[#F2F2EF] p-5 rounded-2xl shadow-[0px_4px_20px_rgba(26,26,26,0.04)] space-y-2">
+<label class="font-label-caps text-on-surface-variant block">Protéines (g)</label>
+<input class="w-full bg-transparent border-none text-heading-lg font-metric-large p-0 focus:ring-0 placeholder:opacity-20" placeholder="0" type="number"/>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-3/4"></div>
+</div>
+</div>
+<!-- Carbs -->
+<div class="bg-[#F2F2EF] p-5 rounded-2xl shadow-[0px_4px_20px_rgba(26,26,26,0.04)] space-y-2">
+<label class="font-label-caps text-on-surface-variant block">Glucides (g)</label>
+<input class="w-full bg-transparent border-none text-heading-lg font-metric-large p-0 focus:ring-0 placeholder:opacity-20" placeholder="0" type="number"/>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-1/3"></div>
+</div>
+</div>
+<!-- Lipids -->
+<div class="bg-[#F2F2EF] p-5 rounded-2xl shadow-[0px_4px_20px_rgba(26,26,26,0.04)] space-y-2">
+<label class="font-label-caps text-on-surface-variant block">Lipides (g)</label>
+<input class="w-full bg-transparent border-none text-heading-lg font-metric-large p-0 focus:ring-0 placeholder:opacity-20" placeholder="0" type="number"/>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-1/4"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Action Button Container -->
+<div class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#FAFAF7] via-[#FAFAF7] to-transparent z-40">
+<div class="max-w-md mx-auto">
+<button class="w-full bg-primary-container text-on-primary-container font-heading-md py-5 rounded-2xl flex items-center justify-center gap-3 shadow-[0px_10px_30px_rgba(0,200,83,0.2)] active:scale-95 transition-all duration-200">
+<span class="material-symbols-outlined">save</span>
+                Enregistrer la recette
+            </button>
+</div>
+</div>
+<!-- Bottom Navigation Bar (Hidden on this transactional page as per rules) -->
+<!-- Suppression applied for focused task context -->
+</body></html>
