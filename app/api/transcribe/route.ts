@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Groq from 'groq-sdk'
+import Groq, { toFile } from 'groq-sdk'
 import { createClient } from '@/lib/supabase/server'
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
@@ -22,15 +22,23 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const ext = audioBlob.type.includes('mp4') ? 'mp4'
+      : audioBlob.type.includes('ogg') ? 'ogg'
+      : 'webm'
+
+    const uploadable = await toFile(audioBlob, `recording.${ext}`, { type: audioBlob.type })
+
     const transcription = await groq.audio.transcriptions.create({
-      file: audioBlob,
+      file: uploadable,
       model: 'whisper-large-v3-turbo',
       language: 'fr',
       response_format: 'json',
     })
 
     return NextResponse.json({ text: transcription.text })
-  } catch {
-    return NextResponse.json({ error: 'Erreur de transcription' }, { status: 500 })
+  } catch (err) {
+    console.error('[transcribe]', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
