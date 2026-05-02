@@ -80,7 +80,6 @@ export default async function ProfilePage() {
   const streak = calculateStreak(mealDates);
   const age = calcAge(profile?.birth_date ?? null);
 
-  const firstName = profile?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'Mon compte';
   const displayName = profile?.full_name ?? user?.email?.split('@')[0] ?? 'Mon compte';
 
   const hasPlan = profile?.daily_calorie_target != null;
