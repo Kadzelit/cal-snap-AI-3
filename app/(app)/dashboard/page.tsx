@@ -3,6 +3,7 @@ import { TopBar } from "@/components/shared/TopBar";
 import { Logo } from "@/components/shared/Logo";
 import { Bell } from "lucide-react";
 import { MealCard } from "@/components/dashboard/MealCard";
+import CreatineTracker from "@/components/dashboard/CreatineTracker";
 import { getMealTypeLabel, getMealTypeEmoji } from "@/lib/utils";
 
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -130,6 +131,8 @@ export default async function DashboardPage() {
               );
             })}
           </div>
+
+          <CreatineTracker />
         </div>
 
         {/* Journal du jour */}
