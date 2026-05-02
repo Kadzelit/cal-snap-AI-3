@@ -1,65 +1,93 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, Mic, MicOff, Sparkles, RotateCcw } from 'lucide-react'
+import { ChevronLeft, Mic, Square, Sparkles, RotateCcw, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+
+type VoiceStatus = 'idle' | 'recording' | 'processing' | 'done' | 'error'
 
 export default function AddVoicePage() {
   const router = useRouter()
+  const [status, setStatus] = useState<VoiceStatus>('idle')
   const [transcript, setTranscript] = useState('')
-  const [isListening, setIsListening] = useState(false)
-  const [isSupported, setIsSupported] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any
-    const SR = w.SpeechRecognition ?? w.webkitSpeechRecognition
-    if (!SR) return
+  const startRecording = useCallback(async () => {
+    setErrorMsg(null)
+    setTranscript('')
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : 'audio/ogg'
 
-    setIsSupported(true)
+      const recorder = new MediaRecorder(stream, { mimeType })
+      chunksRef.current = []
 
-    const recognition = new SR()
-    recognition.lang = 'fr-FR'
-    recognition.continuous = true
-    recognition.interimResults = true
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data)
+      }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (event: any) => {
-      const result = Array.from(event.results as ArrayLike<{ [index: number]: { transcript: string } }>)
-        .map((r) => r[0].transcript)
-        .join('')
-      setTranscript(result)
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop())
+        const blob = new Blob(chunksRef.current, { type: mimeType })
+        await transcribeAudio(blob, mimeType)
+      }
+
+      recorder.start(250)
+      mediaRecorderRef.current = recorder
+      setStatus('recording')
+    } catch {
+      setErrorMsg('Impossible d\'accéder au microphone. Vérifie les autorisations.')
+      setStatus('error')
     }
-
-    recognition.onend = () => setIsListening(false)
-    recognition.onerror = () => setIsListening(false)
-
-    recognitionRef.current = recognition
   }, [])
 
-  const toggleListening = useCallback(() => {
-    if (!recognitionRef.current) return
-    if (isListening) {
-      recognitionRef.current.stop()
-    } else {
-      setTranscript('')
-      setError(null)
-      try {
-        recognitionRef.current.start()
-        setIsListening(true)
-      } catch {
-        setError('Impossible de démarrer le micro. Vérifie les autorisations.')
+  const stopRecording = useCallback(() => {
+    mediaRecorderRef.current?.stop()
+    mediaRecorderRef.current = null
+    setStatus('processing')
+  }, [])
+
+  async function transcribeAudio(blob: Blob, mimeType: string) {
+    setStatus('processing')
+    try {
+      const ext = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm'
+      const file = new File([blob], `recording.${ext}`, { type: mimeType })
+      const formData = new FormData()
+      formData.append('audio', file)
+
+      const res = await fetch('/api/transcribe', { method: 'POST', body: formData })
+      const data = await res.json()
+
+      if (res.ok && data.text?.trim()) {
+        setTranscript(data.text.trim())
+        setStatus('done')
+      } else {
+        setErrorMsg(data.error ?? 'Transcription échouée. Réessaie.')
+        setStatus('error')
       }
+    } catch {
+      setErrorMsg('Erreur réseau. Réessaie.')
+      setStatus('error')
     }
-  }, [isListening])
+  }
+
+  function reset() {
+    mediaRecorderRef.current?.stop()
+    mediaRecorderRef.current = null
+    setTranscript('')
+    setErrorMsg(null)
+    setStatus('idle')
+  }
 
   async function handleAnalyze() {
     if (!transcript.trim()) return
-    setError(null)
     router.push('/analyzing')
     try {
       const res = await fetch('/api/analyze-text', {
@@ -90,87 +118,88 @@ export default function AddVoicePage() {
       <div className="pt-14 px-6 pb-28 flex flex-col items-center">
         <div className="pt-12 w-full space-y-8">
 
-          {!isSupported ? (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-5 text-center space-y-2">
-              <p className="font-semibold text-destructive text-sm">Reconnaissance vocale non disponible</p>
-              <p className="text-xs text-muted-foreground">
-                Ton navigateur ne supporte pas cette fonctionnalité. Utilise Chrome ou Edge.
-              </p>
-              <Link
-                href="/add/text"
-                className="inline-block mt-2 text-sm font-semibold text-primary-container underline"
-              >
-                Utiliser la saisie texte à la place
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="text-center space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  {isListening
-                    ? 'Je t\'écoute… Parle de ton repas'
-                    : transcript
-                    ? 'Transcription terminée'
-                    : 'Appuie sur le micro et décris ton repas'}
-                </p>
-              </div>
+          {/* Status message */}
+          <div className="text-center space-y-1">
+            <p className="text-sm text-muted-foreground">
+              {status === 'idle' && 'Appuie sur le micro et décris ton repas'}
+              {status === 'recording' && 'Parle de ton repas… Appuie sur stop pour terminer'}
+              {status === 'processing' && 'Transcription en cours…'}
+              {status === 'done' && 'Transcription terminée'}
+              {status === 'error' && 'Une erreur est survenue'}
+            </p>
+          </div>
 
-              <div className="flex justify-center">
+          {/* Mic button */}
+          <div className="flex justify-center">
+            {status === 'idle' || status === 'error' ? (
+              <button
+                onClick={startRecording}
+                className="w-24 h-24 rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg bg-primary-container"
+                aria-label="Démarrer l'enregistrement"
+              >
+                <Mic className="w-10 h-10 text-white" />
+              </button>
+            ) : status === 'recording' ? (
+              <button
+                onClick={stopRecording}
+                className="w-24 h-24 rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg bg-destructive animate-pulse"
+                aria-label="Arrêter l'enregistrement"
+              >
+                <Square className="w-10 h-10 text-white fill-white" />
+              </button>
+            ) : (
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-surface-container">
+                <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+              </div>
+            )}
+          </div>
+
+          {/* Transcript area */}
+          {status === 'done' && transcript ? (
+            <div className="w-full space-y-3">
+              <div className="bg-surface-container rounded-2xl p-4 min-h-[80px]">
+                <p className="text-sm text-foreground">{transcript}</p>
+              </div>
+              <div className="flex gap-3">
                 <button
-                  onClick={toggleListening}
-                  className={`w-24 h-24 rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg ${
-                    isListening
-                      ? 'bg-destructive animate-pulse'
-                      : 'bg-primary-container'
-                  }`}
-                  aria-label={isListening ? 'Arrêter' : 'Dicter'}
+                  onClick={reset}
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm text-muted-foreground active:scale-[0.98] transition-transform"
                 >
-                  {isListening ? (
-                    <MicOff className="w-10 h-10 text-white" />
-                  ) : (
-                    <Mic className="w-10 h-10 text-white" />
-                  )}
+                  <RotateCcw className="w-4 h-4" />
+                  Recommencer
+                </button>
+                <button
+                  onClick={handleAnalyze}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-primary-container text-white font-semibold text-sm active:scale-[0.98] transition-all"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Analyser
                 </button>
               </div>
+            </div>
+          ) : status !== 'error' ? (
+            <div className="bg-surface-container rounded-2xl p-4 min-h-[80px] flex items-center justify-center">
+              <p className="text-sm text-muted-foreground italic text-center">
+                {status === 'processing'
+                  ? 'Groq Whisper transcrit ton audio…'
+                  : 'La transcription apparaîtra ici…'}
+              </p>
+            </div>
+          ) : null}
 
-              {transcript ? (
-                <div className="w-full space-y-3">
-                  <div className="bg-surface-container rounded-2xl p-4 min-h-[80px]">
-                    <p className="text-sm text-foreground">{transcript}</p>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => { setTranscript(''); setIsListening(false) }}
-                      className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-border text-sm text-muted-foreground active:scale-[0.98] transition-transform"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      Recommencer
-                    </button>
-                    <button
-                      onClick={handleAnalyze}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-primary-container text-white font-semibold text-sm active:scale-[0.98] transition-all"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Analyser
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-surface-container rounded-2xl p-4 min-h-[80px] flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground italic text-center">
-                    La transcription apparaîtra ici…
-                  </p>
-                </div>
-              )}
-
-              {error && (
-                <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4">
-                  <p className="text-destructive text-sm">{error}</p>
-                </div>
-              )}
-            </>
+          {/* Error */}
+          {errorMsg && (
+            <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4 space-y-3">
+              <p className="text-destructive text-sm">{errorMsg}</p>
+              <button
+                onClick={reset}
+                className="text-sm font-semibold text-destructive underline"
+              >
+                Réessayer
+              </button>
+            </div>
           )}
+
         </div>
       </div>
     </div>

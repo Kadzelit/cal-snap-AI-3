@@ -3,27 +3,28 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, Keyboard } from 'lucide-react'
+import { BrowserMultiFormatReader } from '@zxing/browser'
+import { NotFoundException } from '@zxing/library'
+
+type Status = 'starting' | 'scanning' | 'found' | 'error'
 
 export default function AddBarcodePage() {
   const router = useRouter()
   const videoRef = useRef<HTMLVideoElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const animFrameRef = useRef<number>(0)
-  const [status, setStatus] = useState<'starting' | 'scanning' | 'found' | 'unsupported' | 'error'>('starting')
+  const controlsRef = useRef<{ stop: () => void } | null>(null)
+  const [status, setStatus] = useState<Status>('starting')
   const [manualOpen, setManualOpen] = useState(false)
   const [manualCode, setManualCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const stopCamera = useCallback(() => {
-    cancelAnimationFrame(animFrameRef.current)
-    streamRef.current?.getTracks().forEach((t) => t.stop())
-    streamRef.current = null
+    controlsRef.current?.stop()
+    controlsRef.current = null
   }, [])
 
   const lookupBarcode = useCallback(async (code: string) => {
     setStatus('found')
-    stopCamera()
     setIsLoading(true)
     try {
       const res = await fetch(`/api/barcode/${code}`)
@@ -34,51 +35,34 @@ export default function AddBarcodePage() {
         setErrorMsg(data.error ?? 'Produit non trouvé')
         setStatus('scanning')
         setIsLoading(false)
-        // restart camera
-        startCamera()
       }
     } catch {
       setErrorMsg('Erreur réseau. Réessaie.')
       setStatus('scanning')
       setIsLoading(false)
-      startCamera()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router, stopCamera])
+  }, [router])
 
   const startCamera = useCallback(async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!('BarcodeDetector' in window)) {
-      setStatus('unsupported')
-      return
-    }
+    if (!videoRef.current) return
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-      })
-      if (!videoRef.current) { stream.getTracks().forEach(t => t.stop()); return }
-      videoRef.current.srcObject = stream
-      streamRef.current = stream
-      setStatus('scanning')
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const detector = new (window as any).BarcodeDetector({
-        formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39'],
-      })
-
-      const scan = async () => {
-        if (!videoRef.current || !streamRef.current) return
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const barcodes: any[] = await detector.detect(videoRef.current)
-          if (barcodes.length > 0) {
-            await lookupBarcode(barcodes[0].rawValue as string)
-            return
+      const codeReader = new BrowserMultiFormatReader()
+      const controls = await codeReader.decodeFromVideoDevice(
+        undefined,
+        videoRef.current,
+        (result, error) => {
+          if (result) {
+            controls.stop()
+            controlsRef.current = null
+            lookupBarcode(result.getText())
           }
-        } catch { /* frame not ready yet */ }
-        animFrameRef.current = requestAnimationFrame(scan)
-      }
-      animFrameRef.current = requestAnimationFrame(scan)
+          if (error && !(error instanceof NotFoundException)) {
+            // erreur réelle (pas juste "aucun code dans le frame")
+          }
+        }
+      )
+      controlsRef.current = controls
+      setStatus('scanning')
     } catch {
       setStatus('error')
     }
@@ -93,12 +77,12 @@ export default function AddBarcodePage() {
     e.preventDefault()
     const code = manualCode.trim()
     if (!code) return
+    stopCamera()
     await lookupBarcode(code)
   }
 
   return (
     <div className="relative flex flex-col min-h-screen bg-black overflow-hidden">
-      {/* Camera */}
       <video
         ref={videoRef}
         autoPlay
@@ -107,7 +91,6 @@ export default function AddBarcodePage() {
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* Overlay */}
       <div className="relative z-10 flex flex-col h-screen">
 
         {/* Top bar */}
@@ -126,16 +109,13 @@ export default function AddBarcodePage() {
         <div className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
           {(status === 'scanning' || status === 'found') && (
             <div className="relative w-full max-w-sm h-36">
-              {/* Corners */}
               <div className="absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-white rounded-tl-md" />
               <div className="absolute top-0 right-0 w-8 h-8 border-t-[3px] border-r-[3px] border-white rounded-tr-md" />
               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-[3px] border-l-[3px] border-white rounded-bl-md" />
               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[3px] border-r-[3px] border-white rounded-br-md" />
-              {/* Scanning line */}
               {status === 'scanning' && (
                 <div className="absolute inset-x-2 top-0 h-0.5 bg-primary-container animate-scan" />
               )}
-              {/* Found flash */}
               {status === 'found' && (
                 <div className="absolute inset-0 rounded bg-primary-container/20 border-2 border-primary-container" />
               )}
@@ -145,32 +125,12 @@ export default function AddBarcodePage() {
           {status === 'starting' && (
             <p className="text-white/70 text-sm">Démarrage de la caméra…</p>
           )}
-
           {status === 'found' && (
             <p className="text-white font-semibold text-sm">Code détecté ! Recherche du produit…</p>
           )}
-
           {status === 'scanning' && !isLoading && (
-            <p className="text-white/70 text-sm text-center">
-              Centre le code-barres dans le cadre
-            </p>
+            <p className="text-white/70 text-sm text-center">Centre le code-barres dans le cadre</p>
           )}
-
-          {status === 'unsupported' && (
-            <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-5 text-center space-y-3 max-w-xs">
-              <p className="text-white font-semibold text-sm">Détection non disponible</p>
-              <p className="text-white/70 text-xs">
-                Ton navigateur ne supporte pas la détection automatique. Saisis le code manuellement.
-              </p>
-              <button
-                onClick={() => setManualOpen(true)}
-                className="w-full py-3 rounded-xl bg-primary-container text-white text-sm font-semibold"
-              >
-                Saisir manuellement
-              </button>
-            </div>
-          )}
-
           {status === 'error' && (
             <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-5 text-center space-y-3 max-w-xs">
               <p className="text-white font-semibold text-sm">Caméra inaccessible</p>
@@ -208,10 +168,7 @@ export default function AddBarcodePage() {
       {/* Manual input bottom sheet */}
       {manualOpen && (
         <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setManualOpen(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setManualOpen(false)} />
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl px-6 pt-5 pb-10 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-heading font-bold text-heading-md text-foreground">Saisir le code</h2>
