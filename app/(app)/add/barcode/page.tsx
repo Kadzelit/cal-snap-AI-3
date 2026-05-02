@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { X, Keyboard } from 'lucide-react'
 import { BrowserMultiFormatReader } from '@zxing/browser'
 import { NotFoundException } from '@zxing/library'
+import PhotoPicker from '@/components/shared/PhotoPicker'
 
 type Status = 'starting' | 'scanning' | 'found' | 'error'
 
@@ -17,19 +18,26 @@ export default function AddBarcodePage() {
   const [manualCode, setManualCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 
   const stopCamera = useCallback(() => {
     controlsRef.current?.stop()
     controlsRef.current = null
   }, [])
 
-  const lookupBarcode = useCallback(async (code: string) => {
+  const lookupBarcode = useCallback(async (code: string, photo?: File) => {
     setStatus('found')
     setIsLoading(true)
     try {
       const res = await fetch(`/api/barcode/${code}`)
       const data = await res.json()
       if (res.ok) {
+        if (photo) {
+          const fd = new FormData()
+          fd.append('image', photo)
+          await fetch(`/api/meal/${data.id}`, { method: 'PATCH', body: fd })
+        }
         router.replace(`/meal/${data.id}`)
       } else {
         setErrorMsg(data.error ?? 'Produit non trouvé')
@@ -73,12 +81,23 @@ export default function AddBarcodePage() {
     return () => stopCamera()
   }, [startCamera, stopCamera])
 
+  function handlePhotoSelect(file: File) {
+    setPhotoFile(file)
+    setPhotoPreview(URL.createObjectURL(file))
+  }
+
+  function handlePhotoRemove() {
+    setPhotoFile(null)
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoPreview(null)
+  }
+
   async function handleManualSubmit(e: React.FormEvent) {
     e.preventDefault()
     const code = manualCode.trim()
     if (!code) return
     stopCamera()
-    await lookupBarcode(code)
+    await lookupBarcode(code, photoFile ?? undefined)
   }
 
   return (
@@ -180,6 +199,11 @@ export default function AddBarcodePage() {
               </button>
             </div>
             <form onSubmit={handleManualSubmit} className="space-y-3">
+              <PhotoPicker
+                preview={photoPreview}
+                onSelect={handlePhotoSelect}
+                onRemove={handlePhotoRemove}
+              />
               <input
                 type="text"
                 value={manualCode}

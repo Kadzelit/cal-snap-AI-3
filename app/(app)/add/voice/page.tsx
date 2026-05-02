@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, Mic, Square, Sparkles, RotateCcw, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import PhotoPicker from '@/components/shared/PhotoPicker'
 
 type VoiceStatus = 'idle' | 'recording' | 'processing' | 'done' | 'error'
 
@@ -12,8 +13,21 @@ export default function AddVoicePage() {
   const [status, setStatus] = useState<VoiceStatus>('idle')
   const [transcript, setTranscript] = useState('')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
+
+  function handlePhotoSelect(file: File) {
+    setPhotoFile(file)
+    setPhotoPreview(URL.createObjectURL(file))
+  }
+
+  function handlePhotoRemove() {
+    setPhotoFile(null)
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoPreview(null)
+  }
 
   const startRecording = useCallback(async () => {
     setErrorMsg(null)
@@ -96,11 +110,18 @@ export default function AddVoicePage() {
         body: JSON.stringify({ text: transcript }),
       })
       const data = await res.json()
-      if (res.ok) {
-        router.replace(`/meal/${data.id}`)
-      } else {
+      if (!res.ok) {
         router.replace(`/add/voice?error=${encodeURIComponent(data.error ?? 'Erreur')}`)
+        return
       }
+
+      if (photoFile) {
+        const fd = new FormData()
+        fd.append('image', photoFile)
+        await fetch(`/api/meal/${data.id}`, { method: 'PATCH', body: fd })
+      }
+
+      router.replace(`/meal/${data.id}`)
     } catch {
       router.replace('/add/voice?error=network')
     }
@@ -116,9 +137,8 @@ export default function AddVoicePage() {
       </div>
 
       <div className="pt-14 px-6 pb-28 flex flex-col items-center">
-        <div className="pt-12 w-full space-y-8">
+        <div className="pt-12 w-full space-y-6">
 
-          {/* Status message */}
           <div className="text-center space-y-1">
             <p className="text-sm text-muted-foreground">
               {status === 'idle' && 'Appuie sur le micro et décris ton repas'}
@@ -154,12 +174,19 @@ export default function AddVoicePage() {
             )}
           </div>
 
-          {/* Transcript area */}
+          {/* Transcript */}
           {status === 'done' && transcript ? (
             <div className="w-full space-y-3">
               <div className="bg-surface-container rounded-2xl p-4 min-h-[80px]">
                 <p className="text-sm text-foreground">{transcript}</p>
               </div>
+
+              <PhotoPicker
+                preview={photoPreview}
+                onSelect={handlePhotoSelect}
+                onRemove={handlePhotoRemove}
+              />
+
               <div className="flex gap-3">
                 <button
                   onClick={reset}
@@ -187,19 +214,14 @@ export default function AddVoicePage() {
             </div>
           ) : null}
 
-          {/* Error */}
           {errorMsg && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4 space-y-3">
               <p className="text-destructive text-sm">{errorMsg}</p>
-              <button
-                onClick={reset}
-                className="text-sm font-semibold text-destructive underline"
-              >
+              <button onClick={reset} className="text-sm font-semibold text-destructive underline">
                 Réessayer
               </button>
             </div>
           )}
-
         </div>
       </div>
     </div>

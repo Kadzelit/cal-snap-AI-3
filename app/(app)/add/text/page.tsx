@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, Send, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import PhotoPicker from '@/components/shared/PhotoPicker'
 
 const EXAMPLES = [
   'Bol de riz avec du saumon teriyaki et des légumes sautés',
@@ -16,12 +17,24 @@ export default function AddTextPage() {
   const router = useRouter()
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+
+  function handlePhotoSelect(file: File) {
+    setPhotoFile(file)
+    setPhotoPreview(URL.createObjectURL(file))
+  }
+
+  function handlePhotoRemove() {
+    setPhotoFile(null)
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoPreview(null)
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!text.trim()) return
     setError(null)
-
     router.push('/analyzing')
 
     try {
@@ -31,11 +44,18 @@ export default function AddTextPage() {
         body: JSON.stringify({ text: text.trim() }),
       })
       const data = await res.json()
-      if (res.ok) {
-        router.replace(`/meal/${data.id}`)
-      } else {
+      if (!res.ok) {
         router.replace(`/add/text?error=${encodeURIComponent(data.error ?? 'Erreur')}`)
+        return
       }
+
+      if (photoFile) {
+        const fd = new FormData()
+        fd.append('image', photoFile)
+        await fetch(`/api/meal/${data.id}`, { method: 'PATCH', body: fd })
+      }
+
+      router.replace(`/meal/${data.id}`)
     } catch {
       router.replace('/add/text?error=network')
     }
@@ -63,6 +83,12 @@ export default function AddTextPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <PhotoPicker
+              preview={photoPreview}
+              onSelect={handlePhotoSelect}
+              onRemove={handlePhotoRemove}
+            />
+
             <div className="relative">
               <textarea
                 value={text}
