@@ -22,6 +22,7 @@ export type MealAnalysis = {
 export type VisionProvider = {
   name: string;
   analyzeMeal: (imageBase64OrUrl: string) => Promise<MealAnalysis>;
+  analyzeTextMeal: (text: string) => Promise<MealAnalysis>;
 };
 
 export type ProviderName = "groq" | "openai" | "claude" | "mistral";

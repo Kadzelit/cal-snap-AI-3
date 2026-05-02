@@ -73,6 +73,16 @@ const config: Config = {
         card: "0px 4px 20px rgba(26, 26, 26, 0.04)",
         "card-hover": "0px 8px 30px rgba(26, 26, 26, 0.08)",
       },
+      keyframes: {
+        scan: {
+          '0%': { top: '0%' },
+          '50%': { top: 'calc(100% - 2px)' },
+          '100%': { top: '0%' },
+        },
+      },
+      animation: {
+        scan: 'scan 2s ease-in-out infinite',
+      },
       fontSize: {
         "display-xl": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
         "heading-lg": ["28px", { lineHeight: "1.2" }],

@@ -19,3 +19,7 @@ if (!visionProvider) {
 export async function analyzeMeal(imageBase64OrUrl: string) {
   return visionProvider.analyzeMeal(imageBase64OrUrl);
 }
+
+export async function analyzeTextMeal(text: string) {
+  return visionProvider.analyzeTextMeal(text);
+}
