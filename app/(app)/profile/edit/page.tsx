@@ -9,7 +9,7 @@ export default async function EditProfilePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, gender, birth_date, height_cm, weight_kg, activity_level, goal')
+    .select('full_name, gender, birth_date, height_cm, weight_kg, activity_level, goal, goals_description, target_weight_kg, target_body_fat_pct, target_date')
     .eq('id', user.id)
     .single();
 

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/shared/TopBar';
 import { AddWeightForm } from '@/components/stats/AddWeightForm';
+import { WeightChart } from '@/components/stats/WeightChart';
 
 // --- Pure helpers ---
 
@@ -91,63 +92,6 @@ function CalorieBarChart({ days, target }: { days: DayStats[]; target: number })
   );
 }
 
-function WeightMiniChart({ logs }: { logs: WeightRow[] }) {
-  if (logs.length < 2) return null;
-
-  const recent = logs.slice(-14);
-  const weights = recent.map(l => l.weight_kg);
-  const minW = Math.min(...weights);
-  const maxW = Math.max(...weights);
-  const range = maxW - minW || 1;
-
-  const W = 300;
-  const H = 64;
-  const padX = 8;
-  const padY = 8;
-
-  const pts = recent.map((l, i) => {
-    const x = padX + (i / (recent.length - 1)) * (W - padX * 2);
-    const y = H - padY - ((l.weight_kg - minW) / range) * (H - padY * 2);
-    return { x, y };
-  });
-
-  const polyline = pts.map(p => `${p.x},${p.y}`).join(' ');
-  const first = recent[0];
-  const last = recent[recent.length - 1];
-  const diff = +(last.weight_kg - first.weight_kg).toFixed(1);
-  const diffStr = diff > 0 ? `+${diff}` : String(diff);
-  const diffColor = diff <= 0 ? '#00c853' : '#fe9400';
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-xs font-medium">
-        <span className="text-muted-foreground">{first.weight_kg} kg</span>
-        <span style={{ color: diffColor }}>{diffStr} kg</span>
-        <span className="text-muted-foreground">{last.weight_kg} kg</span>
-      </div>
-      <svg width="100%" viewBox={`0 0 ${W} ${H}`} className="overflow-visible">
-        <polyline
-          points={polyline}
-          fill="none"
-          stroke="#00c853"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        {pts.map((p, i) => (
-          <circle
-            key={i}
-            cx={p.x}
-            cy={p.y}
-            r={i === pts.length - 1 ? 4 : 2.5}
-            fill="#00c853"
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
-
 // --- Page ---
 
 export default async function StatsPage() {
@@ -169,6 +113,7 @@ export default async function StatsPage() {
       .from('weight_logs')
       .select('weight_kg, logged_at')
       .eq('user_id', user?.id ?? '')
+      .gte('logged_at', (() => { const d = new Date(); d.setDate(d.getDate() - 90); return d.toISOString().split('T')[0]; })())
       .order('logged_at', { ascending: true }),
     supabase
       .from('profiles')
@@ -274,17 +219,9 @@ export default async function StatsPage() {
 
           {/* Suivi du poids */}
           <div className="bg-surface-container rounded-3xl p-5 space-y-4">
-            <div className="flex justify-between items-center">
-              <p className="font-heading font-bold text-heading-md">Poids</p>
-              {latestWeight !== null && (
-                <div className="text-right">
-                  <p className="metric text-heading-lg text-foreground">{latestWeight} kg</p>
-                  <p className="text-xs text-muted-foreground">dernier relevé</p>
-                </div>
-              )}
-            </div>
+            <p className="font-heading font-bold text-heading-md">Évolution du poids</p>
 
-            <WeightMiniChart logs={weightList} />
+            <WeightChart logs={weightList} />
 
             {weightList.length === 0 && latestWeight === null && (
               <p className="text-sm text-muted-foreground">

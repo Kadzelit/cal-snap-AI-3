@@ -2,8 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { TopBar } from "@/components/shared/TopBar";
 import { Logo } from "@/components/shared/Logo";
 import { Bell } from "lucide-react";
-import { MealCard } from "@/components/dashboard/MealCard";
 import CreatineTracker from "@/components/dashboard/CreatineTracker";
+import { MealTypeSection } from "@/components/dashboard/MealTypeSection";
 import { getMealTypeLabel, getMealTypeEmoji } from "@/lib/utils";
 
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -52,12 +52,33 @@ export default async function DashboardPage() {
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "";
 
-  // Groupement par type de repas
-  const grouped = MEAL_TYPES.reduce((acc, type) => {
-    const filtered = mealList.filter((m) => m.meal_type === type);
-    if (filtered.length > 0) acc[type] = filtered;
-    return acc;
-  }, {} as Partial<Record<typeof MEAL_TYPES[number], typeof mealList>>);
+  // Répartition calorique par type (25/35/30/10)
+  const MEAL_TYPE_PCTS: Record<string, number> = {
+    breakfast: 0.25,
+    lunch: 0.35,
+    dinner: 0.30,
+    snack: 0.10,
+  };
+
+  const mealTypeRows = MEAL_TYPES.map((type) => {
+    const typeMeals = mealList.filter((m) => m.meal_type === type);
+    return {
+      type,
+      label: getMealTypeLabel(type),
+      emoji: getMealTypeEmoji(type),
+      consumed: typeMeals.reduce((s, m) => s + m.calories, 0),
+      target: Math.round(targetCal * MEAL_TYPE_PCTS[type]),
+      meals: typeMeals.map((m) => ({
+        id: m.id,
+        name: m.name,
+        photo_url: m.photo_url,
+        calories: m.calories,
+        protein_g: Number(m.protein_g),
+        carbs_g: Number(m.carbs_g),
+        fat_g: Number(m.fat_g),
+      })),
+    };
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -135,51 +156,8 @@ export default async function DashboardPage() {
           <CreatineTracker />
         </div>
 
-        {/* Journal du jour */}
-        <div className="space-y-4">
-          <h3 className="font-heading font-bold text-heading-md text-foreground">
-            Journal d'aujourd'hui
-          </h3>
-
-          {mealList.length === 0 ? (
-            <div className="bg-surface-container rounded-2xl p-6 text-center space-y-2">
-              <p className="text-3xl">🍽️</p>
-              <p className="font-heading font-semibold text-foreground">Aucun repas enregistré</p>
-              <p className="text-muted-foreground text-sm">
-                Appuie sur le bouton caméra pour scanner ton premier repas
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-5">
-              {MEAL_TYPES.map((type) => {
-                const typeMeals = grouped[type];
-                if (!typeMeals) return null;
-                return (
-                  <div key={type} className="space-y-2">
-                    <p className="label-caps flex items-center gap-1.5">
-                      <span>{getMealTypeEmoji(type)}</span>
-                      <span>{getMealTypeLabel(type)}</span>
-                    </p>
-                    {typeMeals.map((meal) => (
-                      <MealCard
-                        key={meal.id}
-                        meal={{
-                          id: meal.id,
-                          name: meal.name,
-                          photo_url: meal.photo_url,
-                          calories: meal.calories,
-                          protein_g: Number(meal.protein_g),
-                          carbs_g: Number(meal.carbs_g),
-                          fat_g: Number(meal.fat_g),
-                        }}
-                      />
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        {/* Section Alimentation par type de repas */}
+        <MealTypeSection rows={mealTypeRows} />
       </div>
     </div>
   );

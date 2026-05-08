@@ -69,7 +69,7 @@ export default function GoalPage() {
 
       <button
         disabled={!selected}
-        onClick={() => router.push("/onboarding/info")}
+        onClick={() => router.push(`/onboarding/info?goal=${selected}`)}
         className="w-full h-14 mt-8 rounded-full bg-primary-container text-white font-heading font-bold text-[17px] transition-all active:scale-95 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         Continuer

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,10 @@ type MealItem = {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+};
+
+type EditableItem = MealItem & {
+  _orig: MealItem;
 };
 
 type MealData = {
@@ -37,13 +41,57 @@ export function MealResultClient({ meal }: { meal: MealData }) {
   const [mealType, setMealType] = useState(meal.meal_type ?? "lunch");
   const [saving, setSaving] = useState(false);
 
+  const [items, setItems] = useState<EditableItem[]>(
+    meal.items.map((item) => ({ ...item, _orig: { ...item } }))
+  );
+
+  const totals = useMemo(() => ({
+    calories: items.reduce((s, i) => s + i.calories, 0),
+    protein_g: Math.round(items.reduce((s, i) => s + i.protein_g, 0) * 10) / 10,
+    carbs_g: Math.round(items.reduce((s, i) => s + i.carbs_g, 0) * 10) / 10,
+    fat_g: Math.round(items.reduce((s, i) => s + i.fat_g, 0) * 10) / 10,
+  }), [items]);
+
+  // Si aucun item détecté, on utilise les valeurs originales du repas
+  const displayCalories = items.length > 0 ? totals.calories : meal.calories;
+  const displayProtein = items.length > 0 ? totals.protein_g : meal.protein_g;
+  const displayCarbs = items.length > 0 ? totals.carbs_g : meal.carbs_g;
+  const displayFat = items.length > 0 ? totals.fat_g : meal.fat_g;
+
+  function updateGrams(idx: number, rawVal: string) {
+    const newGrams = parseFloat(rawVal);
+    if (isNaN(newGrams) || newGrams <= 0) return;
+
+    setItems((prev) =>
+      prev.map((item, i) => {
+        if (i !== idx) return item;
+        const ratio = newGrams / item._orig.estimated_grams;
+        return {
+          ...item,
+          estimated_grams: newGrams,
+          calories: Math.round(item._orig.calories * ratio),
+          protein_g: Math.round(item._orig.protein_g * ratio * 10) / 10,
+          carbs_g: Math.round(item._orig.carbs_g * ratio * 10) / 10,
+          fat_g: Math.round(item._orig.fat_g * ratio * 10) / 10,
+        };
+      })
+    );
+  }
+
   const confidence = meal.ai_confidence !== null
     ? Math.round(meal.ai_confidence * 100)
     : null;
 
   const handleSave = async () => {
     setSaving(true);
-    await updateMeal(meal.id, { name, meal_type: mealType });
+    await updateMeal(meal.id, {
+      name,
+      meal_type: mealType,
+      calories: displayCalories,
+      protein_g: displayProtein,
+      carbs_g: displayCarbs,
+      fat_g: displayFat,
+    });
     router.push("/dashboard");
   };
 
@@ -103,7 +151,7 @@ export function MealResultClient({ meal }: { meal: MealData }) {
                 className={`px-4 py-2 rounded-full border text-sm font-semibold transition-colors ${
                   mealType === type
                     ? "bg-primary-container text-white border-primary-container"
-                    : "border-border text-muted-foreground hover:border-primary-container hover:text-primary"
+                    : "border-border text-muted-foreground"
                 }`}
               >
                 {getMealTypeLabel(type)}
@@ -116,13 +164,13 @@ export function MealResultClient({ meal }: { meal: MealData }) {
         <div className="bg-surface-container rounded-3xl p-5 space-y-4">
           <div className="text-center">
             <p className="label-caps mb-1">Total</p>
-            <p className="metric text-metric-large text-foreground">{meal.calories} kcal</p>
+            <p className="metric text-metric-large text-foreground">{displayCalories} kcal</p>
           </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             {[
-              { label: "Protéines", value: `${meal.protein_g}g`, color: "text-primary-container" },
-              { label: "Glucides", value: `${meal.carbs_g}g`, color: "text-secondary-container" },
-              { label: "Lipides", value: `${meal.fat_g}g`, color: "text-muted-foreground" },
+              { label: "Protéines", value: `${displayProtein}g`, color: "text-primary-container" },
+              { label: "Glucides", value: `${displayCarbs}g`, color: "text-secondary-container" },
+              { label: "Lipides", value: `${displayFat}g`, color: "text-muted-foreground" },
             ].map((macro) => (
               <div key={macro.label}>
                 <p className={`metric text-[22px] ${macro.color}`}>{macro.value}</p>
@@ -132,23 +180,39 @@ export function MealResultClient({ meal }: { meal: MealData }) {
           </div>
         </div>
 
-        {/* Liste des aliments détectés */}
-        {meal.items.length > 0 && (
+        {/* Liste des aliments détectés — grammes éditables */}
+        {items.length > 0 && (
           <div className="space-y-3">
-            <h3 className="font-heading font-bold text-heading-md">Aliments détectés</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-heading font-bold text-heading-md">Aliments détectés</h3>
+              <p className="text-xs text-muted-foreground">Modifie les grammes si besoin</p>
+            </div>
             <div className="space-y-2">
-              {meal.items.map((item, i) => (
+              {items.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-4 bg-surface-container rounded-2xl"
+                  className="flex items-center gap-3 p-4 bg-surface-container rounded-2xl"
                 >
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-semibold text-foreground text-sm capitalize">{item.name}</p>
-                    <p className="text-muted-foreground text-xs">{item.estimated_grams}g</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {item.calories} kcal · {item.protein_g}g prot.
+                    </p>
                   </div>
-                  <p className="font-heading font-bold text-foreground text-sm">
-                    {item.calories} kcal
-                  </p>
+
+                  {/* Input grammes */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <input
+                      type="number"
+                      min="1"
+                      max="2000"
+                      step="5"
+                      defaultValue={item._orig.estimated_grams}
+                      onChange={(e) => updateGrams(i, e.target.value)}
+                      className="w-16 text-center px-2 py-1.5 rounded-lg border border-border bg-background text-foreground text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <span className="text-xs text-muted-foreground">g</span>
+                  </div>
                 </div>
               ))}
             </div>

@@ -11,7 +11,24 @@
       "Bash(npm run *)",
       "Bash(Get-ChildItem -Path \"app\\\\\\(app\\)\\\\recipes\" -Recurse -Force)",
       "Bash(Select-Object FullName)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(xargs grep *)",
+      "Bash(vercel --version)",
+      "Bash(vercel --prod)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npm list *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const g = require\\('groq-sdk'\\); console.log\\(typeof g.toFile, Object.keys\\(g\\).filter\\(k => k.toLowerCase\\(\\).includes\\('file'\\)\\)\\)\")",
+      "Bash(vercel deploy *)",
+      "Bash(vercel --prod --yes)",
+      "mcp__supabase__list_tables",
+      "Bash(supabase status *)",
+      "Bash(node -e \"require\\('recharts'\\); console.log\\('ok'\\)\")",
+      "Bash(npx vercel *)",
+      "mcp__supabase__apply_migration",
+      "Bash(npx supabase *)",
+      "Bash(node -e ' *)"
     ]
   }
 }

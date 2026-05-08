@@ -58,7 +58,7 @@ export default async function ProfilePage() {
   ] = await Promise.all([
     supabase
       .from('profiles')
-      .select('full_name, email, gender, birth_date, height_cm, weight_kg, activity_level, goal, daily_calorie_target, daily_protein_g, daily_carbs_g, daily_fat_g')
+      .select('full_name, email, gender, birth_date, height_cm, weight_kg, activity_level, goal, daily_calorie_target, daily_protein_g, daily_carbs_g, daily_fat_g, goals_description, target_weight_kg, target_body_fat_pct, target_date')
       .eq('id', user?.id ?? '')
       .single(),
     supabase
@@ -187,6 +187,58 @@ export default async function ProfilePage() {
               <p className="text-xs text-muted-foreground border-t border-surface-highest pt-3">
                 Activité : {ACTIVITY_LABEL[profile.activity_level]}
               </p>
+            )}
+          </div>
+        )}
+
+        {/* Objectifs détaillés */}
+        {(profile?.goals_description || profile?.target_weight_kg || profile?.target_date) && (
+          <div className="bg-surface-container rounded-3xl p-5 space-y-3">
+            <p className="label-caps">Mes objectifs</p>
+
+            {profile.goals_description && (
+              <p className="text-sm text-foreground leading-relaxed">
+                &ldquo;{profile.goals_description}&rdquo;
+              </p>
+            )}
+
+            {(profile.target_weight_kg || profile.target_body_fat_pct || profile.target_date) && (
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                {profile.target_weight_kg && (
+                  <div className="bg-background rounded-2xl p-3 text-center">
+                    <p className="metric text-heading-md text-primary-container">{profile.target_weight_kg}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">kg cible</p>
+                  </div>
+                )}
+                {profile.target_body_fat_pct && (
+                  <div className="bg-background rounded-2xl p-3 text-center">
+                    <p className="metric text-heading-md text-foreground">{profile.target_body_fat_pct}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">% MG cible</p>
+                  </div>
+                )}
+                {profile.target_date && (
+                  <div className="bg-background rounded-2xl p-3 text-center">
+                    <p className="metric text-[15px] font-bold text-foreground">
+                      {new Date(profile.target_date).toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">échéance</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {profile.target_weight_kg && profile.weight_kg && (
+              <div className="pt-1">
+                {(() => {
+                  const delta = Math.abs(profile.target_weight_kg - profile.weight_kg);
+                  const direction = profile.target_weight_kg < profile.weight_kg ? 'perdre' : 'prendre';
+                  return (
+                    <p className="text-xs text-muted-foreground">
+                      Il te reste <span className="font-semibold text-foreground">{delta.toFixed(1)} kg</span> à {direction}.
+                    </p>
+                  );
+                })()}
+              </div>
             )}
           </div>
         )}

@@ -36,6 +36,11 @@ const GENDER_OPTIONS = [
 export function EditProfileForm({ profile }: Props) {
   const [state, action] = useFormState(updateProfile, initialState);
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const minTargetDate = new Date();
+  minTargetDate.setDate(minTargetDate.getDate() + 7);
+  const minTargetDateStr = minTargetDate.toISOString().split('T')[0];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -83,10 +88,7 @@ export function EditProfileForm({ profile }: Props) {
             <label className="text-sm font-medium text-foreground">Genre</label>
             <div className="flex gap-2">
               {GENDER_OPTIONS.map(({ value, label }) => (
-                <label
-                  key={value}
-                  className="flex-1 relative cursor-pointer"
-                >
+                <label key={value} className="flex-1 relative cursor-pointer">
                   <input
                     type="radio"
                     name="gender"
@@ -112,7 +114,7 @@ export function EditProfileForm({ profile }: Props) {
               name="birth_date"
               type="date"
               defaultValue={profile.birth_date ?? ''}
-              max={new Date().toISOString().split('T')[0]}
+              max={todayStr}
               className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
               required
             />
@@ -146,7 +148,7 @@ export function EditProfileForm({ profile }: Props) {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground" htmlFor="weight_kg">
-                Poids
+                Poids actuel
               </label>
               <div className="relative">
                 <input
@@ -189,6 +191,89 @@ export function EditProfileForm({ profile }: Props) {
                 </div>
               </label>
             ))}
+          </div>
+        </section>
+
+        {/* Objectifs détaillés */}
+        <section className="space-y-3">
+          <div>
+            <p className="label-caps">Mes objectifs détaillés</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Ces informations permettent de calculer tes quotas précisément.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground" htmlFor="goals_description">
+              Décris ton objectif
+            </label>
+            <textarea
+              id="goals_description"
+              name="goals_description"
+              defaultValue={profile.goals_description ?? ''}
+              placeholder="Ex: Je veux perdre 10 kg avant l'été, améliorer mon énergie au quotidien et réduire ma masse grasse..."
+              rows={3}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="target_weight_kg">
+                Poids cible
+              </label>
+              <div className="relative">
+                <input
+                  id="target_weight_kg"
+                  name="target_weight_kg"
+                  type="number"
+                  step="0.1"
+                  defaultValue={profile.target_weight_kg ?? ''}
+                  placeholder="65"
+                  min="20"
+                  max="500"
+                  className="w-full px-4 pr-10 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">kg</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="target_body_fat_pct">
+                Masse grasse cible
+              </label>
+              <div className="relative">
+                <input
+                  id="target_body_fat_pct"
+                  name="target_body_fat_pct"
+                  type="number"
+                  step="0.1"
+                  defaultValue={profile.target_body_fat_pct ?? ''}
+                  placeholder="15"
+                  min="3"
+                  max="60"
+                  className="w-full px-4 pr-8 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground" htmlFor="target_date">
+              Date objectif
+            </label>
+            <input
+              id="target_date"
+              name="target_date"
+              type="date"
+              defaultValue={profile.target_date ?? ''}
+              min={minTargetDateStr}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            />
+            <p className="text-xs text-muted-foreground">
+              Si tu renseignes le poids cible et la date, tes calories quotidiennes seront calculées pour atteindre cet objectif.
+            </p>
           </div>
         </section>
 

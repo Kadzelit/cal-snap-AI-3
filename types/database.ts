@@ -18,6 +18,10 @@ export type Database = {
           daily_protein_g: number | null;
           daily_carbs_g: number | null;
           daily_fat_g: number | null;
+          goals_description: string | null;
+          target_weight_kg: number | null;
+          target_body_fat_pct: number | null;
+          target_date: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -35,6 +39,10 @@ export type Database = {
           daily_protein_g?: number | null;
           daily_carbs_g?: number | null;
           daily_fat_g?: number | null;
+          goals_description?: string | null;
+          target_weight_kg?: number | null;
+          target_body_fat_pct?: number | null;
+          target_date?: string | null;
           created_at?: string;
           updated_at?: string;
         };
