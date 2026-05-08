@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import { MEAL_ANALYSIS_PROMPT, TEXT_MEAL_ANALYSIS_PROMPT, BODY_ANALYSIS_PROMPT } from "../prompts";
+import { buildMealPrompt, buildTextMealPrompt, buildBodyPrompt } from "../prompts";
 import type { VisionProvider, MealAnalysis, BodyAnalysis } from "../types";
 import { MealAnalysisSchema } from "@/lib/validators/meal-analysis";
 import { BodyAnalysisSchema } from "@/lib/validators/body-analysis";
@@ -16,13 +16,14 @@ function extractJson(raw: string): string {
 export const groqProvider: VisionProvider = {
   name: "groq",
 
-  async analyzeTextMeal(text: string): Promise<MealAnalysis> {
+  async analyzeTextMeal(text: string, userContext?: string | null): Promise<MealAnalysis> {
+    const prompt = buildTextMealPrompt(userContext);
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "user",
-          content: `${TEXT_MEAL_ANALYSIS_PROMPT}\n\nDescription du repas : "${text}"`,
+          content: `${prompt}\n\nDescription du repas : "${text}"`,
         },
       ],
       temperature: 0.2,
@@ -36,14 +37,12 @@ export const groqProvider: VisionProvider = {
     const jsonStr = extractJson(content);
     const parsed = JSON.parse(jsonStr);
 
-    if (parsed.error === "not_food") {
-      throw new Error("NOT_FOOD");
-    }
+    if (parsed.error === "not_food") throw new Error("NOT_FOOD");
 
     return MealAnalysisSchema.parse(parsed);
   },
 
-  async analyzeMeal(imageInput: string): Promise<MealAnalysis> {
+  async analyzeMeal(imageInput: string, userContext?: string | null): Promise<MealAnalysis> {
     const imageUrl = imageInput.startsWith("http")
       ? imageInput
       : `data:image/jpeg;base64,${imageInput}`;
@@ -55,7 +54,7 @@ export const groqProvider: VisionProvider = {
         {
           role: "user",
           content: [
-            { type: "text", text: MEAL_ANALYSIS_PROMPT },
+            { type: "text", text: buildMealPrompt(userContext) },
             { type: "image_url", image_url: { url: imageUrl } },
           ],
         },
@@ -70,14 +69,12 @@ export const groqProvider: VisionProvider = {
     const jsonStr = extractJson(content);
     const parsed = JSON.parse(jsonStr);
 
-    if (parsed.error === "not_food") {
-      throw new Error("NOT_FOOD");
-    }
+    if (parsed.error === "not_food") throw new Error("NOT_FOOD");
 
     return MealAnalysisSchema.parse(parsed);
   },
 
-  async analyzeBody(imageInput: string): Promise<BodyAnalysis> {
+  async analyzeBody(imageInput: string, userContext?: string | null): Promise<BodyAnalysis> {
     const imageUrl = imageInput.startsWith("http")
       ? imageInput
       : `data:image/jpeg;base64,${imageInput}`;
@@ -88,7 +85,7 @@ export const groqProvider: VisionProvider = {
         {
           role: "user",
           content: [
-            { type: "text", text: BODY_ANALYSIS_PROMPT },
+            { type: "text", text: buildBodyPrompt(userContext) },
             { type: "image_url", image_url: { url: imageUrl } },
           ],
         },

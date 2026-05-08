@@ -28,7 +28,11 @@
       "Bash(npx vercel *)",
       "mcp__supabase__apply_migration",
       "Bash(npx supabase *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "PowerShell($env:SUPABASE_ACCESS_TOKEN; [System.Environment]::GetEnvironmentVariable\\('SUPABASE_ACCESS_TOKEN', 'User'\\); [System.Environment]::GetEnvironmentVariable\\('SUPABASE_ACCESS_TOKEN', 'Machine'\\))",
+      "PowerShell(Get-Content \"$env:USERPROFILE\\\\.supabase\\\\access-token\" -ErrorAction SilentlyContinue; Get-Content \"$env:APPDATA\\\\supabase\\\\access-token\" -ErrorAction SilentlyContinue; Get-ChildItem \"$env:USERPROFILE\\\\.supabase\" -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-ChildItem \"$env:USERPROFILE\\\\.config\\\\supabase\" -ErrorAction SilentlyContinue; Get-ChildItem \"$env:LOCALAPPDATA\\\\supabase\" -ErrorAction SilentlyContinue; Get-ChildItem \"$env:APPDATA\\\\supabase\" -ErrorAction SilentlyContinue)",
+      "Bash(git push *)"
     ]
   }
 }

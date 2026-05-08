@@ -64,7 +64,7 @@ export async function updateProfile(
 
   const macros = calculateTdee({
     gender, age, height_cm, weight_kg, activity_level, goal,
-    target_weight_kg, target_date,
+    target_weight_kg, target_date, goals_description,
   });
 
   const { error } = await supabase

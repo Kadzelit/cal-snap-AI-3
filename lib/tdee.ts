@@ -24,6 +24,7 @@ export type TdeeParams = {
   goal: Goal;
   target_weight_kg?: number | null;
   target_date?: string | null; // YYYY-MM-DD
+  goals_description?: string | null;
 };
 
 export type MacroTargets = {
@@ -33,8 +34,35 @@ export type MacroTargets = {
   daily_fat_g: number;
 };
 
+function getMacroRatios(goal: Goal, goalsDescription?: string | null) {
+  const desc = (goalsDescription ?? "").toLowerCase();
+
+  if (desc.includes("keto") || desc.includes("cétogène") || desc.includes("cetogene")) {
+    return { protein: 0.30, carbs: 0.05, fat: 0.65 };
+  }
+  if (
+    desc.includes("muscle") || desc.includes("musculation") ||
+    desc.includes("prise de masse") || desc.includes("force") ||
+    desc.includes("hypertrophie")
+  ) {
+    return { protein: 0.40, carbs: 0.35, fat: 0.25 };
+  }
+  if (
+    desc.includes("cardio") || desc.includes("endurance") ||
+    desc.includes("marathon") || desc.includes("course") ||
+    desc.includes("trail")
+  ) {
+    return { protein: 0.25, carbs: 0.50, fat: 0.25 };
+  }
+
+  // Répartition par défaut selon l'objectif
+  const protein = goal === "gain" ? 0.35 : 0.30;
+  const carbs = goal === "lose" ? 0.35 : 0.40;
+  return { protein, carbs, fat: 1 - protein - carbs };
+}
+
 export function calculateTdee(params: TdeeParams): MacroTargets {
-  const { gender, age, height_cm, weight_kg, activity_level, goal, target_weight_kg, target_date } = params;
+  const { gender, age, height_cm, weight_kg, activity_level, goal, target_weight_kg, target_date, goals_description } = params;
 
   // Mifflin-St Jeor
   const bmr = gender === "male"
@@ -61,15 +89,12 @@ export function calculateTdee(params: TdeeParams): MacroTargets {
 
   const daily_calorie_target = Math.max(1200, Math.round(tdee + calorieAdjustment));
 
-  // Répartition macros ajustée selon l'objectif
-  const proteinRatio = goal === "gain" ? 0.35 : 0.30;
-  const carbsRatio = goal === "lose" ? 0.35 : 0.40;
-  const fatRatio = 1 - proteinRatio - carbsRatio;
+  const { protein, carbs, fat } = getMacroRatios(goal, goals_description);
 
   return {
     daily_calorie_target,
-    daily_protein_g: Math.round((daily_calorie_target * proteinRatio) / 4),
-    daily_carbs_g: Math.round((daily_calorie_target * carbsRatio) / 4),
-    daily_fat_g: Math.round((daily_calorie_target * fatRatio) / 9),
+    daily_protein_g: Math.round((daily_calorie_target * protein) / 4),
+    daily_carbs_g: Math.round((daily_calorie_target * carbs) / 4),
+    daily_fat_g: Math.round((daily_calorie_target * fat) / 9),
   };
 }

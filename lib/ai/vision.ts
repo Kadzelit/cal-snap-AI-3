@@ -16,17 +16,17 @@ if (!visionProvider) {
   throw new Error(`Provider IA inconnu : "${activeProviderName}". Valeurs valides : ${Object.keys(providers).join(", ")}`);
 }
 
-export async function analyzeMeal(imageBase64OrUrl: string) {
-  return visionProvider.analyzeMeal(imageBase64OrUrl);
+export async function analyzeMeal(imageBase64OrUrl: string, userContext?: string | null) {
+  return visionProvider.analyzeMeal(imageBase64OrUrl, userContext);
 }
 
-export async function analyzeTextMeal(text: string) {
-  return visionProvider.analyzeTextMeal(text);
+export async function analyzeTextMeal(text: string, userContext?: string | null) {
+  return visionProvider.analyzeTextMeal(text, userContext);
 }
 
-export async function analyzeBody(imageBase64OrUrl: string) {
+export async function analyzeBody(imageBase64OrUrl: string, userContext?: string | null) {
   if (!visionProvider.analyzeBody) {
     throw new Error(`Le provider "${visionProvider.name}" ne supporte pas l'analyse corporelle`);
   }
-  return visionProvider.analyzeBody(imageBase64OrUrl);
+  return visionProvider.analyzeBody(imageBase64OrUrl, userContext);
 }

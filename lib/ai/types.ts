@@ -29,9 +29,9 @@ export type BodyAnalysis = {
 
 export type VisionProvider = {
   name: string;
-  analyzeMeal: (imageBase64OrUrl: string) => Promise<MealAnalysis>;
-  analyzeTextMeal: (text: string) => Promise<MealAnalysis>;
-  analyzeBody?: (imageBase64OrUrl: string) => Promise<BodyAnalysis>;
+  analyzeMeal: (imageBase64OrUrl: string, userContext?: string | null) => Promise<MealAnalysis>;
+  analyzeTextMeal: (text: string, userContext?: string | null) => Promise<MealAnalysis>;
+  analyzeBody?: (imageBase64OrUrl: string, userContext?: string | null) => Promise<BodyAnalysis>;
 };
 
 export type ProviderName = "groq" | "openai" | "claude" | "mistral";

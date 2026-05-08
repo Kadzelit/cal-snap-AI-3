@@ -33,7 +33,7 @@ export async function addWeightLog(formData: FormData) {
   // Met à jour le poids dans le profil et recalcule le TDEE
   const { data: profile } = await supabase
     .from('profiles')
-    .select('gender, birth_date, height_cm, activity_level, goal, target_weight_kg, target_date')
+    .select('gender, birth_date, height_cm, activity_level, goal, target_weight_kg, target_date, goals_description')
     .eq('id', user.id)
     .single();
 
@@ -50,6 +50,7 @@ export async function addWeightLog(formData: FormData) {
       goal: profile.goal as Goal,
       target_weight_kg: profile.target_weight_kg ?? null,
       target_date: profile.target_date ?? null,
+      goals_description: profile.goals_description ?? null,
     });
 
     await supabase

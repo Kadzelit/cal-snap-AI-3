@@ -23,9 +23,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("goals_description")
+      .eq("id", user.id)
+      .single();
+    const userContext = profile?.goals_description ?? null;
+
     let analysis;
     try {
-      analysis = await analyzeTextMeal(parsed.data.text);
+      analysis = await analyzeTextMeal(parsed.data.text, userContext);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erreur IA";
       if (message === "NOT_FOOD") {

@@ -13,6 +13,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
 
+    // Fetch user context for personalised prompts
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("goals_description")
+      .eq("id", user.id)
+      .single();
+    const userContext = profile?.goals_description ?? null;
+
     // Rate limit check
     const rateLimit = await checkRateLimit(user.id);
     if (!rateLimit.allowed) {
@@ -52,7 +60,7 @@ export async function POST(req: NextRequest) {
     // Analyze with AI
     let analysis;
     try {
-      analysis = await analyzeMeal(photoUrl || base64);
+      analysis = await analyzeMeal(photoUrl || base64, userContext);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erreur IA";
       if (message === "NOT_FOOD") {

@@ -1,3 +1,20 @@
+function injectContext(prompt: string, goalsDescription?: string | null): string {
+  if (!goalsDescription?.trim()) return prompt;
+  return `${prompt}\n\nCONTEXTE UTILISATEUR : "${goalsDescription.trim()}" — Tiens compte de cet objectif dans ton analyse si pertinent.`;
+}
+
+export function buildMealPrompt(goalsDescription?: string | null): string {
+  return injectContext(MEAL_ANALYSIS_PROMPT, goalsDescription);
+}
+
+export function buildTextMealPrompt(goalsDescription?: string | null): string {
+  return injectContext(TEXT_MEAL_ANALYSIS_PROMPT, goalsDescription);
+}
+
+export function buildBodyPrompt(goalsDescription?: string | null): string {
+  return injectContext(BODY_ANALYSIS_PROMPT, goalsDescription);
+}
+
 export const BODY_ANALYSIS_PROMPT = `Tu es un expert en composition corporelle. Analyse cette photo d'une personne et estime son pourcentage de masse grasse.
 
 IMPORTANT : Cette estimation est visuelle et approximative (précision ±5-8%). Elle ne remplace pas une mesure médicale (DEXA, impédancemétrie).
