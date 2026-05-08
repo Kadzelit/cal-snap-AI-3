@@ -2,15 +2,36 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, X, Zap, ImageIcon } from "lucide-react";
+import { Camera, X, ImageIcon } from "lucide-react";
+
+async function submitImage(file: File | Blob, fileName: string, router: ReturnType<typeof useRouter>, stopCamera: () => void) {
+  stopCamera();
+  router.push("/analyzing");
+  const formData = new FormData();
+  formData.append("image", file, fileName);
+  try {
+    const res = await fetch("/api/analyze-meal", { method: "POST", body: formData });
+    const data = await res.json();
+    if (res.ok) router.replace(`/meal/${data.id}`);
+    else router.replace("/scan?error=" + encodeURIComponent(data.error || "Erreur"));
+  } catch {
+    router.replace("/scan?error=network");
+  }
+}
 
 export default function ScanPage() {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
+
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    setIsStreaming(false);
+  }, []);
 
   const startCamera = useCallback(async () => {
     try {
@@ -27,68 +48,37 @@ export default function ScanPage() {
     }
   }, []);
 
-  const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    setIsStreaming(false);
-  }, []);
-
   const capturePhoto = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || isCapturing) return;
     setIsCapturing(true);
-
     const video = videoRef.current;
     const canvas = canvasRef.current;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext("2d")?.drawImage(video, 0, 0);
-
     canvas.toBlob(async (blob) => {
       if (!blob) { setIsCapturing(false); return; }
-      const formData = new FormData();
-      formData.append("image", blob, "meal.jpg");
-
-      stopCamera();
-      router.push("/analyzing");
-
-      try {
-        const res = await fetch("/api/analyze-meal", { method: "POST", body: formData });
-        const data = await res.json();
-        if (res.ok) {
-          router.replace(`/meal/${data.id}`);
-        } else {
-          router.replace("/scan?error=" + encodeURIComponent(data.error || "Erreur"));
-        }
-      } catch {
-        router.replace("/scan?error=network");
-      }
+      await submitImage(blob, "meal.jpg", router, stopCamera);
     }, "image/jpeg", 0.85);
   }, [isCapturing, router, stopCamera]);
 
-  const handleGallery = useCallback(() => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-      stopCamera();
-      router.push("/analyzing");
-      const formData = new FormData();
-      formData.append("image", file, file.name);
-      try {
-        const res = await fetch("/api/analyze-meal", { method: "POST", body: formData });
-        const data = await res.json();
-        if (res.ok) router.replace(`/meal/${data.id}`);
-        else router.replace("/scan?error=" + encodeURIComponent(data.error || "Erreur"));
-      } catch {
-        router.replace("/scan?error=network");
-      }
-    };
-    input.click();
+  const handleGalleryChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await submitImage(file, file.name, router, stopCamera);
   }, [router, stopCamera]);
 
   return (
     <div className="relative flex flex-col min-h-screen bg-black overflow-hidden">
+      {/* Hidden gallery input */}
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={handleGalleryChange}
+      />
+
       {/* Camera feed */}
       <video
         ref={videoRef}
@@ -122,28 +112,19 @@ export default function ScanPage() {
             <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-white rounded-br-lg" />
           </div>
         </div>
-        <p className="text-white/70 text-sm text-center font-medium pb-4">
-          Centre ton repas dans le cadre
-        </p>
 
         {/* Bottom controls */}
-        <div className="flex items-center justify-around px-8 pb-12">
-          <button
-            onClick={handleGallery}
-            className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
-            aria-label="Galerie"
-          >
-            <ImageIcon className="w-5 h-5 text-white" />
-          </button>
-
-          {!isStreaming ? (
+        {isStreaming ? (
+          // Camera active — capture + gallery
+          <div className="flex items-center justify-around px-8 pb-12">
             <button
-              onClick={startCamera}
-              className="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center shadow-lg transition-all active:scale-95"
+              onClick={() => galleryInputRef.current?.click()}
+              className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+              aria-label="Galerie"
             >
-              <Camera className="w-8 h-8 text-white" />
+              <ImageIcon className="w-5 h-5 text-white" />
             </button>
-          ) : (
+
             <button
               onClick={capturePhoto}
               disabled={isCapturing}
@@ -151,15 +132,33 @@ export default function ScanPage() {
             >
               <div className="w-16 h-16 rounded-full bg-primary-container" />
             </button>
-          )}
 
-          <button
-            className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
-            aria-label="Flash"
-          >
-            <Zap className="w-5 h-5 text-white" />
-          </button>
-        </div>
+            <div className="w-12" />
+          </div>
+        ) : (
+          // Initial state — two prominent buttons
+          <div className="px-6 pb-12 space-y-3">
+            <p className="text-white/60 text-xs text-center mb-4">
+              Centre ton repas dans le cadre pour une meilleure analyse
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={startCamera}
+                className="flex flex-col items-center gap-2 py-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors"
+              >
+                <Camera className="w-6 h-6" />
+                <span className="text-sm font-semibold">Caméra</span>
+              </button>
+              <button
+                onClick={() => galleryInputRef.current?.click()}
+                className="flex flex-col items-center gap-2 py-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-colors"
+              >
+                <ImageIcon className="w-6 h-6" />
+                <span className="text-sm font-semibold">Bibliothèque</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
