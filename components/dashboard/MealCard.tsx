@@ -30,7 +30,7 @@ export function MealCard({ meal }: { meal: Meal }) {
 
   return (
     <div
-      className={`flex items-center gap-3 p-4 bg-surface-container rounded-2xl transition-opacity ${
+      className={`flex items-center gap-3 p-3 bg-surface-low rounded-xl transition-opacity ${
         deleting ? "opacity-40 pointer-events-none" : ""
       }`}
     >

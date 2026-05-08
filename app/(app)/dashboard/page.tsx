@@ -8,6 +8,24 @@ import { getMealTypeLabel, getMealTypeEmoji } from "@/lib/utils";
 
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"] as const;
 
+const MEAL_TYPE_PCTS: Record<string, number> = {
+  breakfast: 0.25,
+  lunch: 0.35,
+  dinner: 0.30,
+  snack: 0.10,
+};
+
+function getMotivationalMessage(consumed: number, target: number): string {
+  if (consumed === 0) return "Commence ta journée alimentaire 🌱";
+  const pct = consumed / target;
+  const rem = Math.max(target - consumed, 0);
+  if (pct < 0.3) return "Bon début, continue !";
+  if (pct < 0.6) return "Tu es sur la bonne voie 💪";
+  if (pct < 0.9) return `Plus que ${rem} kcal à consommer`;
+  if (pct >= 1) return "Objectif calorique atteint ! 🎉";
+  return "Presque au but, encore un effort !";
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -27,13 +45,11 @@ export default async function DashboardPage() {
 
   const mealList = meals ?? [];
 
-  // Calcul des totaux du jour
   const consumed = mealList.reduce((sum, m) => sum + m.calories, 0);
   const totalProtein = Math.round(mealList.reduce((sum, m) => sum + Number(m.protein_g), 0));
   const totalCarbs = Math.round(mealList.reduce((sum, m) => sum + Number(m.carbs_g), 0));
   const totalFat = Math.round(mealList.reduce((sum, m) => sum + Number(m.fat_g), 0));
 
-  // Objectifs quotidiens (défauts si onboarding non complété)
   const targetCal = profile?.daily_calorie_target ?? 2000;
   const targetProtein = profile?.daily_protein_g ?? 150;
   const targetCarbs = profile?.daily_carbs_g ?? 200;
@@ -41,7 +57,9 @@ export default async function DashboardPage() {
 
   const remaining = Math.max(targetCal - consumed, 0);
   const progress = Math.min((consumed / targetCal) * 100, 100);
-  const circumference = 2 * Math.PI * 52;
+
+  const r = 68;
+  const circumference = 2 * Math.PI * r;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   const today = new Date().toLocaleDateString("fr-FR", {
@@ -51,14 +69,8 @@ export default async function DashboardPage() {
   });
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "";
-
-  // Répartition calorique par type (25/35/30/10)
-  const MEAL_TYPE_PCTS: Record<string, number> = {
-    breakfast: 0.25,
-    lunch: 0.35,
-    dinner: 0.30,
-    snack: 0.10,
-  };
+  const motivationalMsg = getMotivationalMessage(consumed, targetCal);
+  const goalReached = consumed >= targetCal;
 
   const mealTypeRows = MEAL_TYPES.map((type) => {
     const typeMeals = mealList.filter((m) => m.meal_type === type);
@@ -80,6 +92,12 @@ export default async function DashboardPage() {
     };
   });
 
+  const macros = [
+    { label: "Protéines", consumed: totalProtein, target: targetProtein, color: "#00c853", trackColor: "#dcfce7" },
+    { label: "Glucides", consumed: totalCarbs, target: targetCarbs, color: "#fe9400", trackColor: "#fef3c7" },
+    { label: "Lipides", consumed: totalFat, target: targetFat, color: "#a78bfa", trackColor: "#ede9fe" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <TopBar
@@ -91,63 +109,96 @@ export default async function DashboardPage() {
         }
       />
 
-      <div className="pt-14 px-6 pb-28 space-y-6">
-        <div className="pt-4">
-          <p className="label-caps capitalize">{today}</p>
-          <h2 className="font-heading font-bold text-heading-md text-foreground mt-1">
-            Bonjour {firstName ? `${firstName} !` : "!"} 👋
-          </h2>
-        </div>
+      {/* Hero gradient */}
+      <div className="bg-gradient-to-b from-[#005a22] to-[#00a844] pt-14">
+        <div className="px-6 pt-5 pb-14">
+          {/* Greeting */}
+          <div className="mb-5">
+            <p className="text-white/60 text-xs font-semibold uppercase tracking-widest capitalize">
+              {today}
+            </p>
+            <h2 className="font-heading font-bold text-2xl text-white mt-1">
+              {firstName ? `Bonjour ${firstName} !` : "Bonjour !"} 👋
+            </h2>
+            <p className="text-white/75 text-sm mt-0.5">{motivationalMsg}</p>
+          </div>
 
-        {/* Anneau calories */}
-        <div className="bg-surface-container rounded-3xl p-6 shadow-card">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="label-caps">Consommé</p>
-              <p className="metric text-metric-large text-foreground">{consumed}</p>
-              <p className="text-muted-foreground text-sm">sur {targetCal} kcal</p>
-            </div>
-
-            <div className="relative w-32 h-32">
-              <svg className="w-32 h-32 -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="52" fill="none" stroke="#e5e2e1" strokeWidth="8" />
+          {/* Calorie ring centré */}
+          <div className="flex flex-col items-center">
+            <div className="relative w-48 h-48">
+              <svg className="w-48 h-48 -rotate-90" viewBox="0 0 160 160">
                 <circle
-                  cx="60" cy="60" r="52" fill="none"
-                  stroke="#00c853" strokeWidth="8" strokeLinecap="round"
+                  cx="80" cy="80" r={r}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.2)"
+                  strokeWidth="10"
+                />
+                <circle
+                  cx="80" cy="80" r={r}
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="10"
+                  strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
                   className="transition-all duration-700"
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="metric text-[22px] text-foreground">{remaining}</p>
-                <p className="text-[10px] text-muted-foreground font-semibold">restant</p>
+                {goalReached ? (
+                  <>
+                    <p className="text-4xl">🎯</p>
+                    <p className="text-white font-bold text-sm mt-1">Objectif !</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-heading font-extrabold text-5xl text-white tabular-nums leading-none">
+                      {remaining}
+                    </p>
+                    <p className="text-white/70 text-xs font-semibold mt-1">kcal restantes</p>
+                  </>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* Barres macros */}
-          <div className="mt-6 space-y-3">
-            {[
-              { label: "Protéines", consumed: totalProtein, target: targetProtein, color: "#00c853" },
-              { label: "Glucides", consumed: totalCarbs, target: targetCarbs, color: "#fe9400" },
-              { label: "Lipides", consumed: totalFat, target: targetFat, color: "#6c7b6a" },
-            ].map((macro) => {
+            <p className="text-white/60 text-xs mt-3">
+              Consommé :{" "}
+              <span className="text-white font-bold">{consumed}</span> / {targetCal} kcal
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Macros card flottante */}
+      <div className="px-4 -mt-5 relative z-10">
+        <div
+          className="bg-white rounded-3xl p-5"
+          style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}
+        >
+          <div className="grid grid-cols-3 gap-3">
+            {macros.map((macro) => {
               const pct = Math.min((macro.consumed / macro.target) * 100, 100);
               return (
-                <div key={macro.label} className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-muted-foreground">{macro.label}</span>
-                    <span className="text-foreground">
-                      {macro.consumed}g / {macro.target}g
-                    </span>
+                <div key={macro.label} className="flex flex-col gap-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {macro.label}
+                  </p>
+                  <div className="flex items-baseline gap-0.5">
+                    <p className="font-heading font-bold text-foreground text-xl tabular-nums leading-none">
+                      {macro.consumed}
+                    </p>
+                    <span className="text-xs text-muted-foreground">g</span>
                   </div>
-                  <div className="h-2 rounded-full bg-background overflow-hidden">
+                  <div
+                    className="h-1.5 rounded-full overflow-hidden"
+                    style={{ backgroundColor: macro.trackColor }}
+                  >
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{ width: `${pct}%`, backgroundColor: macro.color }}
                     />
                   </div>
+                  <p className="text-[10px] text-muted-foreground">/ {macro.target}g</p>
                 </div>
               );
             })}
@@ -155,8 +206,10 @@ export default async function DashboardPage() {
 
           <CreatineTracker />
         </div>
+      </div>
 
-        {/* Section Alimentation par type de repas */}
+      {/* Repas du jour */}
+      <div className="px-4 pb-28 mt-5 space-y-3">
         <MealTypeSection rows={mealTypeRows} />
       </div>
     </div>
