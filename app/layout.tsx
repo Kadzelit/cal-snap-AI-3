@@ -18,13 +18,9 @@ export const metadata: Metadata = {
   title: "CalSnap IA — Tracking calorique intelligent",
   description: "Photographiez votre repas, l'IA calcule vos calories et macros instantanément.",
   manifest: "/manifest.json",
-  icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
-  },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "CalSnap IA",
   },
 };
