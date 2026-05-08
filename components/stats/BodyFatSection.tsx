@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react';
-import { Camera, Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Camera, ImageIcon, Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { saveBodyLog } from '@/app/(app)/stats/actions';
 import { BodyFatChart } from './BodyFatChart';
@@ -35,6 +35,7 @@ const CATEGORY_COLOR: Record<string, string> = {
 
 export function BodyFatSection({ currentBodyFat, targetBodyFat, recentLogs }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -58,6 +59,7 @@ export function BodyFatSection({ currentBodyFat, targetBodyFat, recentLogs }: Pr
     setResult(null);
     setPhotoUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    if (galleryInputRef.current) galleryInputRef.current.value = '';
   }
 
   async function handleAnalyze() {
@@ -146,6 +148,7 @@ export function BodyFatSection({ currentBodyFat, targetBodyFat, recentLogs }: Pr
       {/* Zone upload */}
       {!preview && !result && (
         <>
+          {/* Input caméra */}
           <input
             ref={fileInputRef}
             type="file"
@@ -154,14 +157,31 @@ export function BodyFatSection({ currentBodyFat, targetBodyFat, recentLogs }: Pr
             className="sr-only"
             onChange={handleFileChange}
           />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full flex flex-col items-center gap-2 py-6 rounded-2xl border-2 border-dashed border-border text-muted-foreground hover:border-primary-container hover:text-primary-container transition-colors"
-          >
-            <Camera className="w-7 h-7" />
-            <span className="text-sm font-medium">Prendre une photo ou importer</span>
-            <span className="text-xs opacity-70">En tenue de sport pour une meilleure précision</span>
-          </button>
+          {/* Input bibliothèque */}
+          <input
+            ref={galleryInputRef}
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={handleFileChange}
+          />
+          <p className="text-xs text-muted-foreground text-center">En tenue de sport pour une meilleure précision</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex flex-col items-center gap-2 py-5 rounded-2xl border-2 border-dashed border-border text-muted-foreground hover:border-primary-container hover:text-primary-container transition-colors"
+            >
+              <Camera className="w-6 h-6" />
+              <span className="text-xs font-medium">Caméra</span>
+            </button>
+            <button
+              onClick={() => galleryInputRef.current?.click()}
+              className="flex flex-col items-center gap-2 py-5 rounded-2xl border-2 border-dashed border-border text-muted-foreground hover:border-primary-container hover:text-primary-container transition-colors"
+            >
+              <ImageIcon className="w-6 h-6" />
+              <span className="text-xs font-medium">Bibliothèque</span>
+            </button>
+          </div>
         </>
       )}
 
