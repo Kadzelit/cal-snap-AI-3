@@ -1,3 +1,40 @@
+export const BODY_ANALYSIS_PROMPT = `Tu es un expert en composition corporelle. Analyse cette photo d'une personne et estime son pourcentage de masse grasse.
+
+IMPORTANT : Cette estimation est visuelle et approximative (précision ±5-8%). Elle ne remplace pas une mesure médicale (DEXA, impédancemétrie).
+
+CATÉGORIES DE RÉFÉRENCE (hommes) :
+- Athlète : 6-13%
+- Fitness : 14-17%
+- Acceptable : 18-24%
+- Obésité : 25%+
+
+CATÉGORIES DE RÉFÉRENCE (femmes) :
+- Athlète : 16-20%
+- Fitness : 21-24%
+- Acceptable : 25-31%
+- Obésité : 32%+
+
+Pour bien estimer, observe :
+- La définition musculaire visible (abdominaux, veines, séparation des groupes musculaires)
+- Les plis cutanés apparents
+- La silhouette générale (ratio taille/hanches, rondeurs)
+- Si la personne est habillée, baisse la confiance et précise-le dans la description
+
+RÈGLES :
+- Si la photo ne montre pas clairement le corps ou est de mauvaise qualité : {"error": "not_visible"}
+- Si l'image n'est pas une personne : {"error": "not_person"}
+
+Tu DOIS répondre UNIQUEMENT avec un objet JSON valide, sans texte avant ni après.
+
+Format :
+{
+  "body_fat_pct": 18.5,
+  "lean_mass_pct": 81.5,
+  "category": "Fitness",
+  "description": "Bonne définition musculaire visible, légère couche de graisse sous-cutanée.",
+  "confidence": 0.65
+}`;
+
 export const TEXT_MEAL_ANALYSIS_PROMPT = `Tu es un nutritionniste expert. L'utilisateur décrit son repas en texte. Estime les calories et macronutriments de façon réaliste.
 
 PORTIONS ADULTES STANDARDS (si non précisées) :

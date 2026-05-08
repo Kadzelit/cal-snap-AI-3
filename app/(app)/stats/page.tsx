@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { TopBar } from '@/components/shared/TopBar';
 import { AddWeightForm } from '@/components/stats/AddWeightForm';
 import { WeightChart } from '@/components/stats/WeightChart';
+import { BodyFatSection } from '@/components/stats/BodyFatSection';
 
 // --- Pure helpers ---
 
@@ -102,7 +103,7 @@ export default async function StatsPage() {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
   thirtyDaysAgo.setHours(0, 0, 0, 0);
 
-  const [{ data: meals }, { data: weightLogs }, { data: profile }] = await Promise.all([
+  const [{ data: meals }, { data: weightLogs }, { data: profile }, { data: bodyLogs }] = await Promise.all([
     supabase
       .from('meals')
       .select('calories, protein_g, carbs_g, fat_g, logged_at')
@@ -117,9 +118,15 @@ export default async function StatsPage() {
       .order('logged_at', { ascending: true }),
     supabase
       .from('profiles')
-      .select('daily_calorie_target, weight_kg')
+      .select('daily_calorie_target, weight_kg, current_body_fat_pct, target_body_fat_pct')
       .eq('id', user?.id ?? '')
       .single(),
+    supabase
+      .from('body_logs')
+      .select('body_fat_pct, logged_at, ai_confidence')
+      .eq('user_id', user?.id ?? '')
+      .order('logged_at', { ascending: false })
+      .limit(10),
   ]);
 
   const mealList = (meals ?? []) as MealRow[];
@@ -231,6 +238,13 @@ export default async function StatsPage() {
 
             <AddWeightForm currentWeight={latestWeight} />
           </div>
+
+          {/* Composition corporelle */}
+          <BodyFatSection
+            currentBodyFat={profile?.current_body_fat_pct ?? null}
+            targetBodyFat={profile?.target_body_fat_pct ?? null}
+            recentLogs={bodyLogs ?? []}
+          />
 
         </div>
       </div>

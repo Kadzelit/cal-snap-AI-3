@@ -23,3 +23,10 @@ export async function analyzeMeal(imageBase64OrUrl: string) {
 export async function analyzeTextMeal(text: string) {
   return visionProvider.analyzeTextMeal(text);
 }
+
+export async function analyzeBody(imageBase64OrUrl: string) {
+  if (!visionProvider.analyzeBody) {
+    throw new Error(`Le provider "${visionProvider.name}" ne supporte pas l'analyse corporelle`);
+  }
+  return visionProvider.analyzeBody(imageBase64OrUrl);
+}

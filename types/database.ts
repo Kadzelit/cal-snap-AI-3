@@ -22,6 +22,7 @@ export type Database = {
           target_weight_kg: number | null;
           target_body_fat_pct: number | null;
           target_date: string | null;
+          current_body_fat_pct: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -43,6 +44,7 @@ export type Database = {
           target_weight_kg?: number | null;
           target_body_fat_pct?: number | null;
           target_date?: string | null;
+          current_body_fat_pct?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -137,6 +139,28 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["recipes"]["Insert"]>;
+        Relationships: [];
+      };
+      body_logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          body_fat_pct: number;
+          photo_url: string | null;
+          logged_at: string;
+          ai_confidence: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          body_fat_pct: number;
+          photo_url?: string | null;
+          logged_at: string;
+          ai_confidence?: number | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["body_logs"]["Insert"]>;
         Relationships: [];
       };
       recipe_ingredients: {

@@ -1,7 +1,8 @@
 import Groq from "groq-sdk";
-import { MEAL_ANALYSIS_PROMPT, TEXT_MEAL_ANALYSIS_PROMPT } from "../prompts";
-import type { VisionProvider, MealAnalysis } from "../types";
+import { MEAL_ANALYSIS_PROMPT, TEXT_MEAL_ANALYSIS_PROMPT, BODY_ANALYSIS_PROMPT } from "../prompts";
+import type { VisionProvider, MealAnalysis, BodyAnalysis } from "../types";
 import { MealAnalysisSchema } from "@/lib/validators/meal-analysis";
+import { BodyAnalysisSchema } from "@/lib/validators/body-analysis";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -74,5 +75,37 @@ export const groqProvider: VisionProvider = {
     }
 
     return MealAnalysisSchema.parse(parsed);
+  },
+
+  async analyzeBody(imageInput: string): Promise<BodyAnalysis> {
+    const imageUrl = imageInput.startsWith("http")
+      ? imageInput
+      : `data:image/jpeg;base64,${imageInput}`;
+
+    const response = await groq.chat.completions.create({
+      model: process.env.GROQ_VISION_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: BODY_ANALYSIS_PROMPT },
+            { type: "image_url", image_url: { url: imageUrl } },
+          ],
+        },
+      ],
+      temperature: 0.2,
+      max_tokens: 512,
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) throw new Error("Réponse vide du modèle");
+
+    const jsonStr = extractJson(content);
+    const parsed = JSON.parse(jsonStr);
+
+    if (parsed.error === "not_visible") throw new Error("NOT_VISIBLE");
+    if (parsed.error === "not_person") throw new Error("NOT_PERSON");
+
+    return BodyAnalysisSchema.parse(parsed);
   },
 };

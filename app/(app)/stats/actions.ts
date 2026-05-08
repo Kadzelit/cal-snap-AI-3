@@ -68,3 +68,34 @@ export async function addWeightLog(formData: FormData) {
   revalidatePath('/dashboard');
   revalidatePath('/profile');
 }
+
+interface BodyLogInput {
+  body_fat_pct: number;
+  photo_url: string | null;
+  ai_confidence: number;
+}
+
+export async function saveBodyLog({ body_fat_pct, photo_url, ai_confidence }: BodyLogInput) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Non authentifié');
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const { error } = await supabase
+    .from('body_logs')
+    .upsert(
+      { user_id: user.id, body_fat_pct, photo_url, logged_at: today, ai_confidence },
+      { onConflict: 'user_id,logged_at' }
+    );
+  if (error) throw new Error(error.message);
+
+  // Met à jour la valeur courante dans le profil
+  await supabase
+    .from('profiles')
+    .update({ current_body_fat_pct: body_fat_pct, updated_at: new Date().toISOString() })
+    .eq('id', user.id);
+
+  revalidatePath('/stats');
+  revalidatePath('/profile');
+}
