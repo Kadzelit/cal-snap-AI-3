@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Camera, Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { saveBodyLog } from '@/app/(app)/stats/actions';
+import { BodyFatChart } from './BodyFatChart';
 
 interface BodyLog {
   body_fat_pct: number;
@@ -137,18 +138,9 @@ export function BodyFatSection({ currentBodyFat, targetBodyFat, recentLogs }: Pr
         </div>
       )}
 
-      {/* Historique compact */}
+      {/* Graphique d'évolution */}
       {recentLogs.length > 0 && !preview && (
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {recentLogs.slice(0, 5).map((log, i) => (
-            <div key={i} className="flex-none bg-background rounded-xl px-3 py-2 text-center min-w-[60px]">
-              <p className="text-sm font-semibold text-foreground">{log.body_fat_pct}%</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">
-                {new Date(log.logged_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-              </p>
-            </div>
-          ))}
-        </div>
+        <BodyFatChart logs={recentLogs} />
       )}
 
       {/* Zone upload */}

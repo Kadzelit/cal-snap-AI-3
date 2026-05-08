@@ -125,8 +125,8 @@ export default async function StatsPage() {
       .from('body_logs')
       .select('body_fat_pct, logged_at, ai_confidence')
       .eq('user_id', user?.id ?? '')
-      .order('logged_at', { ascending: false })
-      .limit(10),
+      .order('logged_at', { ascending: true })
+      .limit(90),
   ]);
 
   const mealList = (meals ?? []) as MealRow[];
