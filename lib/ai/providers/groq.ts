@@ -71,7 +71,15 @@ export const groqProvider: VisionProvider = {
 
     if (parsed.error === "not_food") throw new Error("NOT_FOOD");
 
-    return MealAnalysisSchema.parse(parsed);
+    try {
+      return MealAnalysisSchema.parse(parsed);
+    } catch (err) {
+      console.error("[Groq] Validation zod failed:", {
+        parsed,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw err;
+    }
   },
 
   async analyzeBody(imageInput: string, userContext?: string | null, gender?: string | null, age?: number | null): Promise<BodyAnalysis> {

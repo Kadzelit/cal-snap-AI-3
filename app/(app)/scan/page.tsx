@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Camera, X, ImageIcon } from "lucide-react";
 
 async function submitImage(file: File | Blob, fileName: string, router: ReturnType<typeof useRouter>, stopCamera: () => void) {
@@ -21,12 +21,23 @@ async function submitImage(file: File | Blob, fileName: string, router: ReturnTy
 
 export default function ScanPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error) {
+      setErrorMsg(decodeURIComponent(error));
+      const timer = setTimeout(() => setErrorMsg(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -88,6 +99,13 @@ export default function ScanPage() {
         className="absolute inset-0 w-full h-full object-cover"
       />
       <canvas ref={canvasRef} className="hidden" />
+
+      {/* Error banner */}
+      {errorMsg && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 text-white p-4 text-center text-sm animate-in fade-in">
+          {errorMsg}
+        </div>
+      )}
 
       {/* Overlay */}
       <div className="relative z-10 flex flex-col h-screen">

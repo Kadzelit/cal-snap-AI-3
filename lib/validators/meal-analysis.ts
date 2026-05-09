@@ -11,7 +11,7 @@ const MealItemSchema = z.object({
 
 export const MealAnalysisSchema = z.object({
   meal_name: z.string().min(1),
-  items: z.array(MealItemSchema).min(1),
+  items: z.array(MealItemSchema),
   total: z.object({
     calories: z.number().nonnegative(),
     protein_g: z.number().nonnegative(),

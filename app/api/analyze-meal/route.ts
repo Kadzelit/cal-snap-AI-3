@@ -63,13 +63,24 @@ export async function POST(req: NextRequest) {
       analysis = await analyzeMeal(photoUrl || base64, userContext);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erreur IA";
+      console.error("[analyze-meal] AI error:", message);
+
       if (message === "NOT_FOOD") {
         return NextResponse.json(
           { error: "L'image ne semble pas être un repas. Réessaie avec une autre photo." },
           { status: 422 }
         );
       }
-      return NextResponse.json({ error: "Analyse impossible. Réessaie." }, { status: 500 });
+
+      // If it's a ZodError or validation error
+      if (message.includes("validation") || message.includes("Zod") || message.includes("JSON")) {
+        return NextResponse.json(
+          { error: "IA a eu du mal à analyser cette photo. Essaie une meilleure lumière ou angle." },
+          { status: 422 }
+        );
+      }
+
+      return NextResponse.json({ error: "Analyse impossible. Réessaie dans quelques secondes." }, { status: 500 });
     }
 
     // Save meal to database
