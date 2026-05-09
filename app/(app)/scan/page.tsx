@@ -1,21 +1,35 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Camera, X, ImageIcon } from "lucide-react";
 
-async function submitImage(file: File | Blob, fileName: string, router: ReturnType<typeof useRouter>, stopCamera: () => void) {
+async function submitImage(
+  file: File | Blob,
+  fileName: string,
+  router: ReturnType<typeof useRouter>,
+  stopCamera: () => void,
+  setIsAnalyzing: (val: boolean) => void,
+  setErrorMsg: (msg: string | null) => void
+) {
   stopCamera();
-  router.push("/analyzing");
+  setIsAnalyzing(true);
+  setErrorMsg(null);
+
   const formData = new FormData();
   formData.append("image", file, fileName);
   try {
     const res = await fetch("/api/analyze-meal", { method: "POST", body: formData });
     const data = await res.json();
-    if (res.ok) router.replace(`/meal/${data.id}`);
-    else router.replace("/scan?error=" + encodeURIComponent(data.error || "Erreur"));
+    if (res.ok) {
+      router.push(`/meal/${data.id}`);
+    } else {
+      setIsAnalyzing(false);
+      setErrorMsg(data.error || "Erreur d'analyse");
+    }
   } catch {
-    router.replace("/scan?error=network");
+    setIsAnalyzing(false);
+    setErrorMsg("Erreur réseau — vérifie ta connexion");
   }
 }
 
@@ -27,6 +41,7 @@ export default function ScanPage() {
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -69,14 +84,15 @@ export default function ScanPage() {
     canvas.getContext("2d")?.drawImage(video, 0, 0);
     canvas.toBlob(async (blob) => {
       if (!blob) { setIsCapturing(false); return; }
-      await submitImage(blob, "meal.jpg", router, stopCamera);
+      await submitImage(blob, "meal.jpg", router, stopCamera, setIsAnalyzing, setErrorMsg);
+      setIsCapturing(false);
     }, "image/jpeg", 0.85);
   }, [isCapturing, router, stopCamera]);
 
   const handleGalleryChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    await submitImage(file, file.name, router, stopCamera);
+    await submitImage(file, file.name, router, stopCamera, setIsAnalyzing, setErrorMsg);
   }, [router, stopCamera]);
 
   return (
@@ -104,6 +120,22 @@ export default function ScanPage() {
       {errorMsg && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 text-white p-4 text-center text-sm animate-in fade-in">
           {errorMsg}
+        </div>
+      )}
+
+      {/* Analyzing overlay */}
+      {isAnalyzing && (
+        <div className="fixed inset-0 z-40 bg-black/80 flex flex-col items-center justify-center">
+          <div className="space-y-6 text-center">
+            <div className="relative w-20 h-20 mx-auto">
+              <div className="absolute inset-0 rounded-full border-2 border-white/20" />
+              <div className="absolute inset-0 rounded-full border-t-2 border-white animate-spin" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-white font-semibold">Analyse en cours...</p>
+              <p className="text-white/60 text-sm">Généralement moins de 5 secondes</p>
+            </div>
+          </div>
         </div>
       )}
 
