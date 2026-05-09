@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const GOALS = [
@@ -11,18 +11,21 @@ const GOALS = [
     emoji: "🔥",
     title: "Perdre du poids",
     description: "Réduire l'apport calorique pour maigrir",
+    kcal: "−500 kcal/j",
   },
   {
     value: "maintain",
     emoji: "⚖️",
     title: "Maintenir mon poids",
     description: "Équilibrer alimentation et dépenses",
+    kcal: "Maintien",
   },
   {
     value: "gain",
     emoji: "💪",
     title: "Prendre de la masse",
     description: "Augmenter les calories pour progresser",
+    kcal: "+300 kcal/j",
   },
 ] as const;
 
@@ -47,24 +50,50 @@ export default function GoalPage() {
       </div>
 
       <div className="space-y-3 flex-1">
-        {GOALS.map((goal) => (
-          <button
-            key={goal.value}
-            onClick={() => setSelected(goal.value)}
-            className={cn(
-              "w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all active:scale-[0.98]",
-              selected === goal.value
-                ? "border-primary-container bg-primary-container/10"
-                : "border-border bg-surface-container hover:border-outline"
-            )}
-          >
-            <span className="text-3xl">{goal.emoji}</span>
-            <div>
-              <p className="font-heading font-bold text-foreground">{goal.title}</p>
-              <p className="text-muted-foreground text-sm">{goal.description}</p>
-            </div>
-          </button>
-        ))}
+        {GOALS.map((goal) => {
+          const isSelected = selected === goal.value;
+          return (
+            <button
+              key={goal.value}
+              onClick={() => setSelected(goal.value)}
+              className={cn(
+                "w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 active:scale-[0.97]",
+                isSelected
+                  ? "border-primary-container bg-primary-container/10 shadow-sm"
+                  : "border-border bg-surface-container"
+              )}
+            >
+              <span className="text-3xl shrink-0">{goal.emoji}</span>
+              <div className="flex-1 min-w-0">
+                <p className={cn(
+                  "font-heading font-bold transition-colors",
+                  isSelected ? "text-primary-container" : "text-foreground"
+                )}>
+                  {goal.title}
+                </p>
+                <p className="text-muted-foreground text-sm mt-0.5">{goal.description}</p>
+              </div>
+              <div className="shrink-0 flex flex-col items-end gap-1.5">
+                <div className={cn(
+                  "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200",
+                  isSelected
+                    ? "border-primary-container bg-primary-container scale-110"
+                    : "border-border"
+                )}>
+                  {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+                </div>
+                <span className={cn(
+                  "text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors",
+                  isSelected
+                    ? "bg-primary-container/20 text-primary-container"
+                    : "bg-muted text-muted-foreground"
+                )}>
+                  {goal.kcal}
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <button

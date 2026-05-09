@@ -34,6 +34,7 @@ export async function saveOnboardingProfile(params: SaveProfileParams) {
   const { error } = await supabase.from("profiles").upsert({
     id: user.id,
     email: user.email ?? "",
+    full_name: user.user_metadata?.full_name ?? null,
     gender: params.gender,
     birth_date: params.birth_date,
     height_cm: params.height_cm,

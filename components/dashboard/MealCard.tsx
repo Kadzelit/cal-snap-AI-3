@@ -28,14 +28,21 @@ export function MealCard({ meal }: { meal: Meal }) {
     router.refresh();
   };
 
+  const handlePhotoClick = () => {
+    router.push(`/meal/${meal.id}`);
+  };
+
   return (
     <div
       className={`flex items-center gap-3 p-3 bg-surface-low rounded-xl transition-opacity ${
         deleting ? "opacity-40 pointer-events-none" : ""
       }`}
     >
-      {/* Miniature photo */}
-      <div className="w-14 h-14 rounded-xl bg-background overflow-hidden flex-shrink-0">
+      {/* Miniature photo — cliquable */}
+      <button
+        onClick={handlePhotoClick}
+        className="w-14 h-14 rounded-xl bg-background overflow-hidden flex-shrink-0 cursor-pointer active:scale-95 transition-transform"
+      >
         {meal.photo_url ? (
           <Image
             src={meal.photo_url}
@@ -47,7 +54,7 @@ export function MealCard({ meal }: { meal: Meal }) {
         ) : (
           <div className="flex items-center justify-center h-full text-2xl">🍽️</div>
         )}
-      </div>
+      </button>
 
       {/* Infos — cliquable vers le détail */}
       <Link href={`/meal/${meal.id}`} className="flex-1 min-w-0">

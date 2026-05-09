@@ -34,10 +34,14 @@ export async function POST(req: NextRequest) {
     // Fetch user context for personalised prompts
     const { data: profile } = await supabase
       .from("profiles")
-      .select("goals_description")
+      .select("goals_description, gender, birth_date")
       .eq("id", user.id)
       .single();
     const userContext = profile?.goals_description ?? null;
+    const gender = profile?.gender ?? null;
+    const age = profile?.birth_date
+      ? Math.floor((Date.now() - new Date(profile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+      : null;
 
     // Convert to base64 for vision model
     const arrayBuffer = await imageFile.arrayBuffer();
@@ -46,7 +50,7 @@ export async function POST(req: NextRequest) {
     // Analyze with AI
     let analysis;
     try {
-      analysis = await analyzeBody(photoUrl || base64, userContext);
+      analysis = await analyzeBody(photoUrl || base64, userContext, gender, age);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erreur IA";
       if (message === "NOT_VISIBLE") {

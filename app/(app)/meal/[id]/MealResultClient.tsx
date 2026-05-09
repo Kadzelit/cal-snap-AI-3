@@ -58,8 +58,8 @@ export function MealResultClient({ meal }: { meal: MealData }) {
   const displayCarbs = items.length > 0 ? totals.carbs_g : meal.carbs_g;
   const displayFat = items.length > 0 ? totals.fat_g : meal.fat_g;
 
-  function updateGrams(idx: number, rawVal: string) {
-    const newGrams = parseFloat(rawVal);
+  function updateGrams(idx: number, rawVal: string | number) {
+    const newGrams = typeof rawVal === "number" ? rawVal : parseFloat(rawVal);
     if (isNaN(newGrams) || newGrams <= 0) return;
 
     setItems((prev) =>
@@ -180,41 +180,72 @@ export function MealResultClient({ meal }: { meal: MealData }) {
           </div>
         </div>
 
-        {/* Liste des aliments détectés — grammes éditables */}
+        {/* Liste des aliments détectés — slider de portion */}
         {items.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-heading font-bold text-heading-md">Aliments détectés</h3>
-              <p className="text-xs text-muted-foreground">Modifie les grammes si besoin</p>
+              <p className="text-xs text-muted-foreground">Glisse pour ajuster</p>
             </div>
             <div className="space-y-2">
-              {items.map((item, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 p-4 bg-surface-container rounded-2xl"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground text-sm capitalize">{item.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {item.calories} kcal · {item.protein_g}g prot.
-                    </p>
-                  </div>
+              {items.map((item, i) => {
+                const sliderMax = Math.max(500, Math.round(item._orig.estimated_grams * 3 / 5) * 5);
+                const ratio = item.estimated_grams / item._orig.estimated_grams;
+                const ratioLabel = ratio === 1 ? null : `×${ratio.toFixed(1)}`;
 
-                  {/* Input grammes */}
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <input
-                      type="number"
-                      min="1"
-                      max="2000"
-                      step="5"
-                      defaultValue={item._orig.estimated_grams}
-                      onChange={(e) => updateGrams(i, e.target.value)}
-                      className="w-16 text-center px-2 py-1.5 rounded-lg border border-border bg-background text-foreground text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    <span className="text-xs text-muted-foreground">g</span>
+                return (
+                  <div key={i} className="p-4 bg-surface-container rounded-2xl space-y-3">
+                    {/* Ligne nom + macros + input */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-foreground text-sm capitalize">{item.name}</p>
+                          {ratioLabel && (
+                            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-primary-container/15 text-primary-container">
+                              {ratioLabel}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          <span className="font-semibold text-foreground">{item.calories} kcal</span>
+                          {" · "}{item.protein_g}g P · {item.carbs_g}g G · {item.fat_g}g L
+                        </p>
+                      </div>
+                      {/* Input numérique synchronisé */}
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <input
+                          type="number"
+                          min="5"
+                          max={sliderMax}
+                          step="5"
+                          value={Math.round(item.estimated_grams)}
+                          onChange={(e) => updateGrams(i, e.target.value)}
+                          className="w-16 text-center px-2 py-1.5 rounded-lg border border-border bg-background text-foreground text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary-container"
+                        />
+                        <span className="text-xs text-muted-foreground">g</span>
+                      </div>
+                    </div>
+
+                    {/* Slider */}
+                    <div className="space-y-1">
+                      <input
+                        type="range"
+                        min="5"
+                        max={sliderMax}
+                        step="5"
+                        value={Math.round(item.estimated_grams)}
+                        onChange={(e) => updateGrams(i, Number(e.target.value))}
+                        className="portion-slider"
+                        style={{ "--slider-progress": `${((Math.round(item.estimated_grams) - 5) / (sliderMax - 5)) * 100}%` } as React.CSSProperties}
+                      />
+                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <span>5g</span>
+                        <span>{sliderMax}g</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

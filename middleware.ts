@@ -3,6 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const PUBLIC_ROUTES = ["/login", "/signup"];
 const AUTH_ROUTES = ["/login", "/signup"];
+// Routes qui nécessitent un profil complet (onboarding terminé)
+const REQUIRES_PROFILE = [
+  "/dashboard", "/scan", "/analyzing", "/meal",
+  "/recipes", "/stats", "/profile", "/dashboard-recipes",
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -32,15 +37,29 @@ export async function middleware(request: NextRequest) {
 
   const isPublic = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
   const isAuthRoute = AUTH_ROUTES.some((r) => pathname.startsWith(r));
+  const requiresProfile = REQUIRES_PROFILE.some((r) => pathname.startsWith(r));
 
-  // Redirect authenticated users away from auth pages
+  // Utilisateur connecté sur une page auth → dashboard
   if (user && isAuthRoute) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Redirect unauthenticated users to login
+  // Utilisateur non connecté → login
   if (!user && !isPublic) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Utilisateur connecté sur une route app → vérifier que l'onboarding est complet
+  if (user && requiresProfile) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("daily_calorie_target")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.daily_calorie_target) {
+      return NextResponse.redirect(new URL("/onboarding/goal", request.url));
+    }
   }
 
   return supabaseResponse;

@@ -24,9 +24,9 @@ export async function analyzeTextMeal(text: string, userContext?: string | null)
   return visionProvider.analyzeTextMeal(text, userContext);
 }
 
-export async function analyzeBody(imageBase64OrUrl: string, userContext?: string | null) {
+export async function analyzeBody(imageBase64OrUrl: string, userContext?: string | null, gender?: string | null, age?: number | null) {
   if (!visionProvider.analyzeBody) {
     throw new Error(`Le provider "${visionProvider.name}" ne supporte pas l'analyse corporelle`);
   }
-  return visionProvider.analyzeBody(imageBase64OrUrl, userContext);
+  return visionProvider.analyzeBody(imageBase64OrUrl, userContext, gender, age);
 }

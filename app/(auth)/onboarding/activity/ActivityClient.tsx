@@ -32,7 +32,7 @@ export function ActivityClient() {
       <div className="space-y-2 mb-10">
         <p className="label-caps">Étape 3 sur 4</p>
         <h1 className="font-heading font-extrabold text-heading-lg text-foreground">
-          Ton niveau d'activité
+          Ton niveau d&apos;activité
         </h1>
         <p className="text-muted-foreground text-body-md">
           Estime ton activité physique hebdomadaire.
@@ -40,24 +40,47 @@ export function ActivityClient() {
       </div>
 
       <div className="space-y-3 flex-1">
-        {ACTIVITIES.map((activity) => (
-          <button
-            key={activity.value}
-            onClick={() => setSelected(activity.value)}
-            className={cn(
-              "w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[0.98]",
-              selected === activity.value
-                ? "border-primary-container bg-primary-container/10"
-                : "border-border bg-surface-container hover:border-outline"
-            )}
-          >
-            <span className="text-2xl">{activity.emoji}</span>
-            <div>
-              <p className="font-heading font-bold text-foreground">{activity.title}</p>
-              <p className="text-muted-foreground text-sm">{activity.description}</p>
-            </div>
-          </button>
-        ))}
+        {ACTIVITIES.map((activity) => {
+          const isSelected = selected === activity.value;
+          return (
+            <button
+              key={activity.value}
+              onClick={() => setSelected(activity.value)}
+              className={cn(
+                "w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-200 active:scale-[0.97]",
+                isSelected
+                  ? "border-primary-container bg-primary-container/10 shadow-sm"
+                  : "border-border bg-surface-container"
+              )}
+            >
+              <span className={cn(
+                "text-3xl shrink-0 transition-transform duration-200",
+                isSelected && "scale-110"
+              )}>
+                {activity.emoji}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className={cn(
+                  "font-heading font-bold transition-colors",
+                  isSelected ? "text-primary-container" : "text-foreground"
+                )}>
+                  {activity.title}
+                </p>
+                <p className="text-muted-foreground text-sm mt-0.5">{activity.description}</p>
+              </div>
+              <div className={cn(
+                "w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all duration-200",
+                isSelected
+                  ? "border-primary-container bg-primary-container scale-110"
+                  : "border-border"
+              )}>
+                {isSelected && (
+                  <div className="w-2 h-2 rounded-full bg-white" />
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <button

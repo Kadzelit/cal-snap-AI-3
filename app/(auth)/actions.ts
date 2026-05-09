@@ -31,7 +31,7 @@ export async function login(prevState: AuthState, formData: FormData): Promise<A
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data: { user }, error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     if (error.message.includes("Invalid login credentials")) {
@@ -41,6 +41,17 @@ export async function login(prevState: AuthState, formData: FormData): Promise<A
       return { error: "Confirme ton email avant de te connecter." };
     }
     return { error: "Erreur de connexion. Réessaie." };
+  }
+
+  // Vérifier si l'onboarding a déjà été complété
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("daily_calorie_target")
+    .eq("id", user!.id)
+    .single();
+
+  if (!profile?.daily_calorie_target) {
+    redirect("/onboarding/goal");
   }
 
   redirect("/dashboard");
