@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Camera, X, ImageIcon } from "lucide-react";
@@ -96,7 +97,8 @@ export default function ScanPage() {
   }, [router, stopCamera]);
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-black overflow-hidden">
+    <Suspense fallback={null}>
+      <div className="relative flex flex-col min-h-screen bg-black overflow-hidden">
       {/* Hidden gallery input */}
       <input
         ref={galleryInputRef}
@@ -211,5 +213,6 @@ export default function ScanPage() {
         )}
       </div>
     </div>
+    </Suspense>
   );
 }
